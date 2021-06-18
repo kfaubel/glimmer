@@ -1,0 +1,29 @@
+{
+  "activeList": "Dunstable",
+  "loglevel": "info",
+  "User-Agent": "DayDreamOne2 (ken@faubel.org)",
+  "configs": [
+    {
+      "name": "Test",
+      "displayList": [
+        {
+          "enabled": "true",
+          "type": "redCedars",
+          "friendlyName": "Conditions at Red Cedars",
+          "resource": "http://redcedars.amcrestddns.com:20280",
+          "expirationPeriodMins": "60",
+          "displayDurationSecs": "8"
+        },
+        {
+          "enabled": "true",
+          "type": "forecastSummary",
+          "friendlyName": "Onset, MA",
+          "resource": "https://api.weather.gov/points/41.7476,-70.6676/forecast",
+          "alertURL": "https://api.weather.gov/alerts/active/zone/MAZ021",
+          "expirationPeriodMins": "300",
+          "displayDurationSecs": "2"
+        }
+      ]
+    }
+  ]
+}

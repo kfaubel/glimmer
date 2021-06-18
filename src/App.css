@@ -1,0 +1,123 @@
+.Viewer {
+  text-align: center;
+  background: #111;
+}
+
+
+body {
+    background: rgb(94, 174, 253);
+}
+
+.Login {
+  background-color:#93C9FF;
+}
+
+#myCanvas { 
+    height: 100vh; 
+    width: 100vw; 
+    display: block;
+}
+
+.float-button-prev {
+  position: fixed;
+  left: 20px;
+  bottom: 50%;
+  z-index: 9999;
+  cursor: pointer;
+  border-radius: 10px;
+  visibility: visible;
+  color: #fff;
+  background-color: #007bff;
+  border-color: #007bff
+}
+
+.float-button-next {
+  position: fixed;
+  right: 20px;
+  bottom: 50%;
+  z-index: 9999;
+  cursor: pointer;
+  border-radius: 10px;
+  visibility: visible;
+  color: #fff;
+  background-color: #007bff;
+  border-color: #007bff
+}
+
+.float-select {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  z-index: 9999;
+  cursor: pointer;
+  visibility: visible;
+  color: #fff;
+  background-color: #007bff;
+  border-color: #007bff
+}
+
+.float-button-toggle {
+  position: fixed;
+  right: 20px;
+  bottom: 80px;
+  z-index: 9999;
+  cursor: pointer;
+  visibility: visible;
+  color: #fff;
+  background-color: #007bff;
+  border-color: #007bff
+}
+      
+.k-fadeOut {
+  visibility: hidden;
+  opacity: 0;
+  transition: 1.5s ease-out
+}
+
+.k-fadeIn {
+  visibility: visible;
+  opacity: 1;
+  transition: .5s ease-in
+}
+
+.slidecontainer {
+  position: fixed;
+  bottom: 10px;
+  z-index: 9999;
+  width: 100%;
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 7px;
+  border-radius: 2px; 
+  background: #f1f1f3;
+  outline: none;
+  opacity: 0.6;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider:hover {
+  background: #ffffff;
+  opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10px;
+  height: 15px;
+  border-radius: 50%; 
+  background: #007bff;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 10px;
+  height: 15px;
+  border-radius: 50%;
+  background: #007bff;
+  cursor: pointer;
+}
