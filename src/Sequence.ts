@@ -2,8 +2,19 @@ import axios from 'axios';
 
 import screenListConfig from "./screenlist.json";
 
-class Sequence {
+interface Screen {
+    nextUpdate: number;
+    resource: string;
+    refreshMinutes: number;
+    image: any | null;
+}
 
+class Sequence {
+    nextIndex: number;
+    screenList: Array<Screen>;
+    updatePeriod: number;
+    nullCount: number;
+    intervalTimer: any;
     constructor() {
         this.nextIndex = 0;
         this.screenList = [];
@@ -63,7 +74,7 @@ class Sequence {
 
                 image.onerror = () => {
                     console.error(`Sequence::update: ${screen.resource} image.onerror`);
-                    this.image = null;
+                    screen.image = null;
                 }
 
                 // console.log(`Sequence::update: ${screen.resource} type is ${type} again`);
@@ -80,7 +91,7 @@ class Sequence {
         }
     }
 
-    getNext = () => {
+    getNext = (): Screen | null => {
         let item = this.screenList[this.nextIndex];
 
         if (item.image === null && this.nullCount < 2) {

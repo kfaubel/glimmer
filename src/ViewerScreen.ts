@@ -4,10 +4,18 @@ import './App.css';
 import Canvas from './components/Canvas';
 
 import Sequence from "./Sequence";
+import Screen from "./Sequence";
+
+interface ViewerProps {
+
+}
 
 class Viewer extends React.Component {
     
-    constructor(props) {
+    sequence: Sequence;
+    timeout: any | null;
+
+    constructor(props: ViewerProps) {
         super(props);
         
         this.sequence = new Sequence("url");
@@ -22,7 +30,7 @@ class Viewer extends React.Component {
 
     showNextScreen = async () => {
         console.log("ViewerScreen::showNextScreen");
-        let nextItem = this.sequence.getNext();
+        let nextItem: Screen = this.sequence.getNext();
 
         this.setState({
             image: nextItem.image,

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import {
     Switch,
     withRouter,
@@ -10,14 +10,16 @@ import Sequence from "./Sequence" ;
 
 import config from "./config.json";
 
+interface AppProps {
 
+}
 
 // class Viewer extends React.Component {
 class App extends React.Component {
 
-    constructor(props) {
+    constructor(props: AppProps) {
         super(props);
-        this.sequence = new Sequence("url");
+        //this.sequence = new Sequence("url");
 
         this.state = {
             publicUrlPrefix: config.publicUrlPrefix,
@@ -28,7 +30,7 @@ class App extends React.Component {
         };
     }
 
-    exitViewer = (message) => {
+    exitViewer = (message: string) => {
         console.log(`App::exitViewer: message=${message}`);
         this.setState({ loginMessage: message, toLogin: true });
         this.props.history.push(this.state.publicUrlPrefix + '/');
@@ -41,7 +43,7 @@ class App extends React.Component {
     // the one we’re interested in is history.push. What it does is it pushes a new entry into the history stack 
     // - aka redirecting the user to another route.
     // The {...props} below pushs all the props down to the subordinate screens including 'history' OR NOT
-    render() {
+    render(): ReactNode {
         // console.log(`App::render - PUBLIC_URL=${this.state.publicUrlPrefix}`)
 
         // Total fail.  This seems like the most straight forward way to do this
@@ -57,7 +59,7 @@ class App extends React.Component {
                     <Route path={this.state.publicUrlPrefix + "/"} // "/viewer"}
                         render={(props) =>
                             <ViewerScreen {...props}
-                                sequence={this.sequence}
+                                //sequence={this.sequence}
                                 exitViewer={this.exitViewer}
                                 component={ViewerScreen} />
                         }

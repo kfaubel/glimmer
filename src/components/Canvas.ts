@@ -1,5 +1,10 @@
-import React from 'react';
+import React, { useRef, Context } from 'react';
 var dateFormat = require("dateformat");
+
+export interface MyCanvasProps {
+    name: string;
+    image: HTMLImageElement | null;
+}
 
 class MyCanvas extends React.Component {
     // Important props:
@@ -7,12 +12,16 @@ class MyCanvas extends React.Component {
     //    image - image data to use directly in assignment to image.src
     //    displaySecs - how long this screen should be displayed for
     // eslint-disable-next-line no-useless-constructor
-    constructor(props) {
+    currentImage: HTMLImageElement | null;
+    props: MyCanvasProps;
+
+    constructor(props: MyCanvasProps) {
         super(props);
+        this.props = props;
         this.currentImage = null;
     }
 
-    componentDidUpdate = (prevProps) => {
+    componentDidUpdate = (prevProps: MyCanvasProps) => {
         //console.log(`Canvas::componentDidUpdate- show the image`);
         this.showImage(this.props.image);
     }
@@ -26,7 +35,7 @@ class MyCanvas extends React.Component {
         // console.log(`Canvas - componentWillUnmount: ${this.props.url}`);
     }
 
-    fadeInImage(ctx, image, x, y, w, h) {
+    fadeInImage(ctx: Context, image: HTMLImageElement, x: number, y: number, w: number, h: number) {
         return new Promise(function (resolve, reject) {
             console.log("fadeInImage start")
             let opacity = 0;
@@ -49,7 +58,7 @@ class MyCanvas extends React.Component {
         });
     };
 
-    fadeOutImage(ctx, image) {
+    fadeOutImage(ctx, image: HTMLImageElement) {
         return new Promise(function (resolve, reject) {
             
             console.log("fadeOutImage start")
@@ -72,11 +81,15 @@ class MyCanvas extends React.Component {
         });
     };    
 
-    showImage = async (newImage) => {
+    showImage = async (newImage: HTMLImageElement) => {
         if (typeof newImage !== 'undefined' && newImage !== null) {
             console.log(`Canvas::showImage showing image (${this.props.name}).`);
             //console.dir(newImage);
-            let canvas = document.getElementById("myCanvas");
+            let canvas: HTMLCanvasElement | null = document.getElementById("myCanvas");
+            if (canvas === null) {
+                console.log("canvas was null");
+                return;
+            }
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
 
