@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/glimmer/static/css/main.716b6e44.chunk.css",
+    "main.js": "/glimmer/static/js/main.dd054bf6.chunk.js",
+    "main.js.map": "/glimmer/static/js/main.dd054bf6.chunk.js.map",
+    "runtime-main.js": "/glimmer/static/js/runtime-main.b52459b3.js",
+    "runtime-main.js.map": "/glimmer/static/js/runtime-main.b52459b3.js.map",
+    "static/css/2.61b4cb56.chunk.css": "/glimmer/static/css/2.61b4cb56.chunk.css",
+    "static/js/2.0280548f.chunk.js": "/glimmer/static/js/2.0280548f.chunk.js",
+    "static/js/2.0280548f.chunk.js.map": "/glimmer/static/js/2.0280548f.chunk.js.map",
+    "index.html": "/glimmer/index.html",
+    "static/css/2.61b4cb56.chunk.css.map": "/glimmer/static/css/2.61b4cb56.chunk.css.map",
+    "static/css/main.716b6e44.chunk.css.map": "/glimmer/static/css/main.716b6e44.chunk.css.map",
+    "static/js/2.0280548f.chunk.js.LICENSE.txt": "/glimmer/static/js/2.0280548f.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.b52459b3.js",
+    "static/css/2.61b4cb56.chunk.css",
+    "static/js/2.0280548f.chunk.js",
+    "static/css/main.716b6e44.chunk.css",
+    "static/js/main.dd054bf6.chunk.js"
+  ]
+}
