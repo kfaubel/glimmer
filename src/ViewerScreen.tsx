@@ -1,16 +1,21 @@
 import React from 'react';
 
 import './App.css';
-import Canvas from './components/Canvas';
+import { MyCanvas } from './components/Canvas';
 
-import Sequence from "./Sequence";
-import Screen from "./Sequence";
+import { Sequence, Screen } from "./Sequence";
+//import Screen from "./Sequence";
 
 interface ViewerProps {
-
 }
 
-class Viewer extends React.Component {
+interface ViewerState {
+    image: any | null;
+    name: string;
+    displayTime: number;
+}
+
+class Viewer extends React.Component<ViewerProps, ViewerState> {
     
     sequence: Sequence;
     timeout: any | null;
@@ -18,7 +23,7 @@ class Viewer extends React.Component {
     constructor(props: ViewerProps) {
         super(props);
         
-        this.sequence = new Sequence("url");
+        this.sequence = new Sequence();
         this.state = {
             image:     null,
             name: "null",
@@ -28,7 +33,7 @@ class Viewer extends React.Component {
         this.timeout = null;
     }
 
-    showNextScreen = async () => {
+    showNextScreen = (): void => {
         console.log("ViewerScreen::showNextScreen");
         let nextItem: Screen = this.sequence.getNext();
 
@@ -44,7 +49,9 @@ class Viewer extends React.Component {
         }, this.state.displayTime * 1000)
     }
 
-    async componentDidMount() {        
+    async componentDidMount() {  
+        await this.sequence.start();
+              
         this.showNextScreen();
 
         //document.addEventListener('mousedown', this.handleClick);
@@ -59,7 +66,7 @@ class Viewer extends React.Component {
 
     // This is the handler for the mouse buttons.  In full screen it can be used to 
     // advance, rewind or logout  
-    handleClick = (event) => {
+    handleClick = (event: React.MouseEvent) => {
         console.log("Viewer::onClick", event.button);
         
         if (this.isInFullScreen()) {
@@ -70,10 +77,12 @@ class Viewer extends React.Component {
     }
 
     isInFullScreen = () => {
-        return (document.fullscreenElement && document.fullscreenElement !== null) ||
-            (document.webkitFullscreenElement && document.webkitFullscreenElement !== null) ||
-            (document.mozFullScreenElement && document.mozFullScreenElement !== null) ||
-            (document.msFullscreenElement && document.msFullscreenElement !== null)
+        return (document.fullscreenElement && document.fullscreenElement !== null);
+         
+        // return (document.fullscreenElement && document.fullscreenElement !== null) ||
+        //     (document.webkitFullscreenElement && document.webkitFullscreenElement !== null) ||
+        //     (document.mozFullScreenElement && document.mozFullScreenElement !== null) ||
+        //     (document.msFullscreenElement && document.msFullscreenElement !== null)
     }
 
     openFullscreen = () => {
@@ -83,12 +92,12 @@ class Viewer extends React.Component {
 
         if (docElm.requestFullscreen) {
             docElm.requestFullscreen();
-        } else if (docElm.mozRequestFullScreen) {
-            docElm.mozRequestFullScreen();
-        } else if (docElm.webkitRequestFullScreen) {
-            docElm.webkitRequestFullScreen();
-        } else if (docElm.msRequestFullscreen) {
-            docElm.msRequestFullscreen();
+        // } else if (docElm.mozRequestFullScreen) {
+        //     docElm.mozRequestFullScreen();
+        // } else if (docElm.webkitRequestFullScreen) {
+        //     docElm.webkitRequestFullScreen();
+        // } else if (docElm.msRequestFullscreen) {
+        //     docElm.msRequestFullscreen();
         }
     }
 
@@ -97,12 +106,12 @@ class Viewer extends React.Component {
         //console.log("closeFullScreen");
         if (document.exitFullscreen) {
             document.exitFullscreen();
-        } else if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen();
-        } else if (document.mozCancelFullScreen) {
-            document.mozCancelFullScreen();
-        } else if (document.msExitFullscreen) {
-            document.msExitFullscreen();
+        // } else if (document.webkitExitFullscreen) {
+        //     document.webkitExitFullscreen();
+        // } else if (document.mozCancelFullScreen) {
+        //     document.mozCancelFullScreen();
+        // } else if (document.msExitFullscreen) {
+        //     document.msExitFullscreen();
         }
     }
 
@@ -110,7 +119,7 @@ class Viewer extends React.Component {
         console.log("Viewer::render");
         return (
             <div id="myViewer" className="Viewer">
-                <Canvas image ={this.state.image} name = {this.state.name}/>
+                <MyCanvas image ={this.state.image} name = {this.state.name}/>
             </div>
         )
     }

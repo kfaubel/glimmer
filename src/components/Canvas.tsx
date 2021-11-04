@@ -1,4 +1,4 @@
-import React, { useRef, Context } from 'react';
+import React from 'react';
 var dateFormat = require("dateformat");
 
 export interface MyCanvasProps {
@@ -6,7 +6,7 @@ export interface MyCanvasProps {
     image: HTMLImageElement | null;
 }
 
-class MyCanvas extends React.Component {
+export class MyCanvas extends React.Component {
     // Important props:
     // screen - Object with:
     //    image - image data to use directly in assignment to image.src
@@ -35,8 +35,8 @@ class MyCanvas extends React.Component {
         // console.log(`Canvas - componentWillUnmount: ${this.props.url}`);
     }
 
-    fadeInImage(ctx: Context, image: HTMLImageElement, x: number, y: number, w: number, h: number) {
-        return new Promise(function (resolve, reject) {
+    fadeInImage(ctx: CanvasRenderingContext2D, image: HTMLImageElement, x: number, y: number, w: number, h: number) {
+        return new Promise<void>(function (resolve, reject) {
             console.log("fadeInImage start")
             let opacity = 0;
             function fade() {
@@ -58,42 +58,47 @@ class MyCanvas extends React.Component {
         });
     };
 
-    fadeOutImage(ctx, image: HTMLImageElement) {
-        return new Promise(function (resolve, reject) {
-            
+    fadeOutImage(ctx: CanvasRenderingContext2D, image: HTMLImageElement, x: number, y: number, w: number, h: number) {
+        return new Promise<void>(function (resolve, reject) {
             console.log("fadeOutImage start")
             let opacity = 1;
             function fade() {
                 if ((opacity -= .05) > 0) {
                     //console.dir(ctx);
+                    //console.dir(image);
                     //console.log(`Opacity: ${opacity}`);
                     ctx.globalAlpha = opacity;
-                    ctx.drawImage(image.image, image.x, image.y, image.w, image.h);
+                    ctx.drawImage(image, x, y, w, h);
                     //ctx.fillStyle = "rgba(255, 255, 255, opacity)";
                     //el.style.opacity = opacity;
                     requestAnimationFrame(fade);
-                } else {                    
-                    console.log("fadeOutImage done")
+                } else {
+                    console.log("fadeOutImage done");
                     resolve();
                 }
             }
             fade();
         });
-    };    
+    };
 
-    showImage = async (newImage: HTMLImageElement) => {
+    showImage = async (newImage: HTMLImageElement | null) => {
         if (typeof newImage !== 'undefined' && newImage !== null) {
             console.log(`Canvas::showImage showing image (${this.props.name}).`);
             //console.dir(newImage);
-            let canvas: HTMLCanvasElement | null = document.getElementById("myCanvas");
+            let canvas: HTMLCanvasElement | null = document.getElementById("myCanvas") as HTMLCanvasElement;
             if (canvas === null) {
-                console.log("canvas was null");
+                console.log("Canvas:: showImage() - \"myCanvas\" element was null");
                 return;
             }
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
 
-            let ctx = canvas.getContext("2d");
+            let ctx: CanvasRenderingContext2D | null = canvas.getContext("2d");
+
+            if (ctx === null) {
+                console.log("Canvas:: showImage() - Failed to get CanvasRenderingContext2D from canvas");
+                return;
+            }
 
             var wrh = newImage.width / newImage.height;
             var newWidth = canvas.width;
@@ -116,7 +121,7 @@ class MyCanvas extends React.Component {
 
             console.log("before");
             if (this.currentImage !== null) {
-                await this.fadeOutImage(ctx, this.currentImage);
+                await this.fadeOutImage(ctx, this.currentImage, x, y, newWidth, newHeight);
             }
             //await this.fadeToBlack(ctx, canvas.width, canvas.height);
             console.log("middle");
@@ -128,15 +133,21 @@ class MyCanvas extends React.Component {
             
             console.log("end");
 
-            this.currentImage = {image: newImage, x: x, y: y, w: newWidth, h: newHeight};
+            this.currentImage = newImage; //{image: newImage, x: x, y: y, w: newWidth, h: newHeight};
             
         } else {
             console.log(`Canvas::showImage is null or undefined, user sees the time.`);
-            let canvas = document.getElementById("myCanvas");
+            let canvas: HTMLCanvasElement = document.getElementById("myCanvas") as HTMLCanvasElement;
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
 
-            let ctx = canvas.getContext("2d");
+            let ctx: CanvasRenderingContext2D | null = canvas.getContext("2d");
+
+            if (ctx === null) {
+                console.log("Canvas:: showImage() - Failed to get CanvasRenderingContext2D from canvas");
+                return;
+            }
+
             ctx.fillStyle = "#003399";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -153,10 +164,8 @@ class MyCanvas extends React.Component {
         }
     }
 
-    render() {
+    render(): React.ReactNode {
         console.log("MyCanvas::render");
         return (<canvas id="myCanvas"></canvas>);
     }
 }
-
-export default MyCanvas;

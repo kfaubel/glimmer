@@ -6,12 +6,12 @@ import {
 } from "react-router-dom";
 
 import ViewerScreen from "./ViewerScreen"
-import Sequence from "./Sequence" ;
+//import Sequence from "./Sequence" ;
 
-import config from "./config.json";
+//import config from "./config.json";
 
 interface AppProps {
-
+    history: string;
 }
 
 // class Viewer extends React.Component {
@@ -22,18 +22,18 @@ class App extends React.Component {
         //this.sequence = new Sequence("url");
 
         this.state = {
-            publicUrlPrefix: config.publicUrlPrefix,
+            publicUrlPrefix: "",
             toViewer: false,
             toLogin: false,
             loginMessage: "Let's get started"
-
         };
     }
 
-    exitViewer = (message: string) => {
+    exitViewer = (message: string): void => {
         console.log(`App::exitViewer: message=${message}`);
         this.setState({ loginMessage: message, toLogin: true });
-        this.props.history.push(this.state.publicUrlPrefix + '/');
+        // TODO: enable this maybe
+        // this.props.history.push('/');
     }
 
     // The real workhorse of React Router is the History library. Under the hood, it’s what’s keeping track 
@@ -56,7 +56,7 @@ class App extends React.Component {
             <div>
                 {/* A <Switch> looks through its children <Route>s and renders the first one that matches the current URL. */}
                 <Switch>
-                    <Route path={this.state.publicUrlPrefix + "/"} // "/viewer"}
+                    <Route path={"/"} // "/viewer"}
                         render={(props) =>
                             <ViewerScreen {...props}
                                 //sequence={this.sequence}
