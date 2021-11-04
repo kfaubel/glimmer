@@ -22,7 +22,9 @@ export class Sequence {
         this.updatePeriod = 60;
         this.nullCount = 0;
 
-        this.screenList = JSON.parse('{"screens" : [{"resource": "https://i.imgur.com/Whf10Sd.png", "refreshMinutes": 60, "displaySecs": 6}]}');
+        const listJson = JSON.parse('{"screens" : [{"resource": "https://i.imgur.com/Whf10Sd.png", "refreshMinutes": 60, "displaySecs": 6}]}');
+        this.screenList = listJson.screens;
+        //console.log(JSON.stringify(this.screenList, null, 4));
     }
 
     start = async () => {
@@ -46,7 +48,11 @@ export class Sequence {
     update = async () => {
         console.log(`Sequence::update - **********************  Starting  *********************`);
         const now = new Date().getTime();
-        //for (const screen of this.screenList) {
+        if (this.screenList === undefined || this.screenList === null) {
+            console.log("ScreenList is undefined.  Skipping update" + this.screenList);
+            return;
+        }
+        
         this.screenList.forEach(async (screen) => {
             console.log(`Sequence::update: Checking: ${screen.resource}`);
             if (typeof screen.nextUpdate === 'undefined' || screen.nextUpdate < now) {
