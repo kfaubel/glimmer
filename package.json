@@ -1,8 +1,8 @@
 {
   "name": "glimmer",
   "version": "0.1.0",
-  "private": true,
-  "homepageZZ": "https://kfaubel.github.io/khoto",
+  "private": false,
+  "homepage": "https://kfaubel.github.io/glimmer",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kfaubel/glimmer.git"
@@ -27,7 +27,7 @@
     "start": "react-scripts start",
     "buildX": "react-scripts build",
     "build": "tsc",
-    "test": "react-scripts test",
+    "testX": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
