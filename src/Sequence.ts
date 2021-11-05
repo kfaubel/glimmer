@@ -1,11 +1,14 @@
 import axios from 'axios';
 
 export interface Screen {
-    nextUpdate: number;
+    enabled?: boolean;
+    month?: string;
+    friendlyName: string;
+    nextUpdate?: number;
     resource: string;
     displaySecs: number;
     refreshMinutes: number;
-    image: any | null;
+    image?: any | null;
 }
 
 export class Sequence {
@@ -22,8 +25,8 @@ export class Sequence {
         this.updatePeriod = 60;
         this.nullCount = 0;
 
-        const listJson = JSON.parse('{"screens" : [{"resource": "https://i.imgur.com/Whf10Sd.png", "refreshMinutes": 60, "displaySecs": 6}]}');
-        this.screenList = listJson.screens;
+        //const listJson = JSON.parse('{"screens" : [{"resource": "https://i.imgur.com/Whf10Sd.png", "refreshMinutes": 60, "displaySecs": 6}]}');
+        //this.screenList = listJson.screens;
         //console.log(JSON.stringify(this.screenList, null, 4));
     }
 
@@ -38,7 +41,41 @@ export class Sequence {
     getScreenList = async () => {
         try {
             const response = await axios.get(this.screenListUrl);
-            this.screenList = response.data.screens as Array<Screen>;
+            const serverList: Array<Screen> = response.data.screens;
+            serverList.forEach((screen) => {
+                //console.log(JSON.stringify(screen, null, 4));
+                //console.log(`screen.enabled: type: ${typeof screen.enabled}, value: ${screen.enabled}`);
+                if (screen.enabled) {
+                    // "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/googleTopTen-[01:10].jpg",
+                    if (screen.resource.includes("[01:10]")) {                    
+                        const resource = screen.resource;
+                        for (let i = 1; i <= 10; i++) {
+                            let indexStr = `${i}`;
+                            if (indexStr.length === 1) {
+                                indexStr = "0" + indexStr;
+                            }
+                            const newResource = resource.replace("[01:10]", indexStr)
+                            this.screenList.push({
+                                enabled: true,
+                                friendlyName: screen.friendlyName + "-" + indexStr,
+                                resource: newResource, 
+                                month: screen.month,
+                                refreshMinutes: screen.refreshMinutes, 
+                                displaySecs: screen.displaySecs,
+                                nextUpdate: 0
+                            });
+
+                            console.log(`Sequence::getScreenList: Adding: ${newResource}`);
+                        }
+                    } else {
+                        screen.nextUpdate = 0;
+                        this.screenList.push(screen);
+                        console.log(`Sequence::getScreenList: Adding: ${screen.resource}`)
+                    }
+                } else {
+                    console.log(`Sequence::getScreenList: Skipping disabled: ${screen.resource}`)
+                }
+            })
 
         } catch (e) {
             console.log(`Sequence::getScreenList failed to get data ${e}`);
@@ -49,18 +86,24 @@ export class Sequence {
         console.log(`Sequence::update - **********************  Starting  *********************`);
         const now = new Date().getTime();
         if (this.screenList === undefined || this.screenList === null) {
-            console.log("ScreenList is undefined.  Skipping update" + this.screenList);
+            console.log("ScreenList is empty.  Skipping update" + this.screenList);
             return;
         }
         
         this.screenList.forEach(async (screen) => {
-            console.log(`Sequence::update: Checking: ${screen.resource}`);
-            if (typeof screen.nextUpdate === 'undefined' || screen.nextUpdate < now) {
+            if (typeof screen.nextUpdate === "undefined") {
+                console.log(`Sequence:: update screen.nextUpdate is undefined, Setting to now.`);
+                screen.nextUpdate = now;
+            }
+            
+            //console.log(`Sequence::update: Checking: ${screen.resource} (${screen.nextUpdate}, time until update ${(screen.nextUpdate - now)/1000} secs`);
+            if (typeof screen.nextUpdate === "undefined" || screen.nextUpdate < now) {
                 console.log(`Sequence::update: Time to update: ${screen.resource}`);
                 let result = await axios({
                     url: screen.resource,
                     method: "get",
-                    responseType: "arraybuffer"
+                    responseType: "arraybuffer",
+                    timeout: 5000
                 })
 
                 console.log(`Sequence::update: ${screen.resource} GET status: ${result.status}`);
@@ -87,7 +130,7 @@ export class Sequence {
                     let image = new Image();
 
                     image.onload = () => {
-                        console.log(`Sequence::update: ${screen.resource} image.onload`);
+                        //console.log(`Sequence::update: ${screen.resource} image.onload`);
                         screen.image = image;
                         // console.dir(image);
                         // this.showImage(image); - we will do this in Canvas
@@ -103,19 +146,19 @@ export class Sequence {
                     // console.log(`Sequence::update Assigning data to image: ${imgStr}`);
                     image.src = imgStr;
 
-                    screen.nextUpdate = now + (screen.refreshMinutes * 3600);
-                    console.log(`Sequence::update Updated next update to ${screen.nextUpdate}`);
-                    console.log(`Sequence::update (update-time - now)/60 seconds ${(screen.nextUpdate - now)/60}`);
+                    screen.nextUpdate = now + (screen.refreshMinutes * 60 * 1000);
+                    //console.log(`Sequence::update Updated next update to ${screen.nextUpdate}`);
+                    //console.log(`Sequence::update (update-time - now)/60 seconds ${(screen.nextUpdate - now)/60}`);
                 }
             } else {
-                console.log(`Sequence::update: ${screen.resource} up-to-date`)
+                const secsTilUpdate = (screen.nextUpdate - now)/1000;
+                const formattedName = (screen.friendlyName + "                      ").substring(0,20);
+                console.log(`Sequence::update: ${formattedName} up-to-date, ${secsTilUpdate.toFixed(0)} secs to go`)
             }
         
         });
     }
    
-
-    // TODO: should this just return an image?
     getNext = (): Screen => {
         let item: Screen = this.screenList[this.nextIndex] as Screen;
 
@@ -127,15 +170,14 @@ export class Sequence {
         }
 
         if (item.image === null ) {
-            console.log(`Sequence::getNext: returning null image with 1 sec duration`)
-            const nullImage:Screen = {image: null, displaySecs: 5, nextUpdate: 0, refreshMinutes: 0, resource: ""};
+            console.log(`Sequence::getNext: returning null image with 5 sec duration`)
+            const nullImage:Screen = {image: null, displaySecs: 5, nextUpdate: 0, refreshMinutes: 0, resource: "", friendlyName: "null"};
             return nullImage;
         }
 
         if (this.nextIndex >= this.screenList.length)
             this.nextIndex = 0;
 
-        console.log(`Sequence::getNext: resource: ${item.resource} non-null"}`)
         return item;
     }
 

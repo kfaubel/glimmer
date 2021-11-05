@@ -37,7 +37,7 @@ export class MyCanvas extends React.Component {
 
     fadeInImage(ctx: CanvasRenderingContext2D, image: HTMLImageElement, x: number, y: number, w: number, h: number) {
         return new Promise<void>(function (resolve, reject) {
-            console.log("fadeInImage start")
+            //console.log("fadeInImage start")
             let opacity = 0;
             function fade() {
                 if ((opacity += .05) < 1) {
@@ -50,7 +50,7 @@ export class MyCanvas extends React.Component {
                     //el.style.opacity = opacity;
                     requestAnimationFrame(fade);
                 } else {
-                    console.log("fadeInImage done");
+                    //console.log("fadeInImage done");
                     resolve();
                 }
             }
@@ -60,7 +60,7 @@ export class MyCanvas extends React.Component {
 
     fadeOutImage(ctx: CanvasRenderingContext2D, image: HTMLImageElement, x: number, y: number, w: number, h: number) {
         return new Promise<void>(function (resolve, reject) {
-            console.log("fadeOutImage start")
+            //console.log("fadeOutImage start")
             let opacity = 1;
             function fade() {
                 if ((opacity -= .05) > 0) {
@@ -73,7 +73,7 @@ export class MyCanvas extends React.Component {
                     //el.style.opacity = opacity;
                     requestAnimationFrame(fade);
                 } else {
-                    console.log("fadeOutImage done");
+                    //console.log("fadeOutImage done");
                     resolve();
                 }
             }
@@ -83,7 +83,7 @@ export class MyCanvas extends React.Component {
 
     showImage = async (newImage: HTMLImageElement | null) => {
         if (typeof newImage !== 'undefined' && newImage !== null) {
-            console.log(`Canvas::showImage showing image (${this.props.name}).`);
+            //console.log(`Canvas::showImage showing image (${this.props.name}).`);
             //console.dir(newImage);
             let canvas: HTMLCanvasElement | null = document.getElementById("myCanvas") as HTMLCanvasElement;
             if (canvas === null) {
@@ -119,19 +119,16 @@ export class MyCanvas extends React.Component {
                 y = (canvas.height - newHeight) / 2;
             }
 
-            console.log("before");
             if (this.currentImage !== null) {
                 await this.fadeOutImage(ctx, this.currentImage, x, y, newWidth, newHeight);
             }
             //await this.fadeToBlack(ctx, canvas.width, canvas.height);
-            console.log("middle");
+            
             
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             //ctx.fillRect(0, 0, canvas.width, canvas.height);
             //ctx.drawImage(newImage, x, y, newWidth, newHeight);
             await this.fadeInImage(ctx, newImage, x, y, newWidth, newHeight);
-            
-            console.log("end");
 
             this.currentImage = newImage; //{image: newImage, x: x, y: y, w: newWidth, h: newHeight};
             
@@ -165,7 +162,7 @@ export class MyCanvas extends React.Component {
     }
 
     render(): React.ReactNode {
-        console.log("MyCanvas::render");
+        //console.log("MyCanvas::render");
         return (<canvas id="myCanvas"></canvas>);
     }
 }

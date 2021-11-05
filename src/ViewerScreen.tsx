@@ -34,24 +34,22 @@ class Viewer extends React.Component<ViewerProps, ViewerState> {
     }
 
     showNextScreen = (): void => {
-        console.log("ViewerScreen::showNextScreen");
         let nextItem: Screen = this.sequence.getNext();
-
         this.setState({
             image: nextItem.image,
             name: nextItem.resource,
             displayTime: nextItem.displaySecs            
         });
+        console.log(`ViewerScreen::showNextScreen - ${nextItem.friendlyName}, for ${this.state.displayTime} secs`);
 
         this.timeout = setTimeout(() => {
-            console.log(`ViewerScreen::showNextScreen - setting timeout for ${this.state.displayTime} secs`);
             this.showNextScreen();
         }, this.state.displayTime * 1000)
     }
 
     async componentDidMount() {  
         await this.sequence.start();
-              
+
         this.showNextScreen();
 
         //document.addEventListener('mousedown', this.handleClick);
@@ -116,7 +114,7 @@ class Viewer extends React.Component<ViewerProps, ViewerState> {
     }
 
     render() {
-        console.log("Viewer::render");
+        //console.log("Viewer::render");
         return (
             <div id="myViewer" className="Viewer">
                 <MyCanvas image ={this.state.image} name = {this.state.name}/>
