@@ -40,7 +40,7 @@ export class Sequence {
 
     getScreenList = async () => {
         try {
-            const response = await axios.get(this.screenListUrl);
+            const response = await axios.get(this.screenListUrl, {timeout: 5000});
             const serverList: Array<Screen> = response.data.screens;
             serverList.forEach((screen) => {
                 //console.log(JSON.stringify(screen, null, 4));
