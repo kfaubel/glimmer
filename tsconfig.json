@@ -35,7 +35,7 @@
     "src/components/Canvas.tsx",
     "src/ViewerScreen.tsx",
     "src/App.tsx"
-, "src/index.tsx"  ],
+, "src/index.tsx", "src/with-router.tsx"  ],
   "exclude": [
     "node_modules"
   ]

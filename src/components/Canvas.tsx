@@ -1,5 +1,5 @@
 import React from 'react';
-var dateFormat = require("dateformat");
+import dateFormat from "dateformat";
 
 export interface MyCanvasProps {
     name: string;

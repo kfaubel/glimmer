@@ -17,13 +17,15 @@ export class Sequence {
     updatePeriod: number;
     nullCount: number;
     intervalTimer: any;
-    screenListUrl = "http://glimmerhub.com/config/screen-list.json"
+    profile: string;
+    screenListUrlBase = "http://glimmerhub.com/config/"
 
-    constructor() {
+    constructor(profile: string) {
         this.nextIndex = 0;
         this.screenList = [];
         this.updatePeriod = 60;
         this.nullCount = 0;
+        this.profile = profile;
 
         //const listJson = JSON.parse('{"screens" : [{"resource": "https://i.imgur.com/Whf10Sd.png", "refreshMinutes": 60, "displaySecs": 6}]}');
         //this.screenList = listJson.screens;
@@ -40,7 +42,7 @@ export class Sequence {
 
     getScreenList = async () => {
         try {
-            const response = await axios.get(this.screenListUrl, {timeout: 5000});
+            const response = await axios.get(this.screenListUrlBase + this.profile + ".json", {timeout: 5000});
             const serverList: Array<Screen> = response.data.screens;
             serverList.forEach((screen) => {
                 //console.log(JSON.stringify(screen, null, 4));

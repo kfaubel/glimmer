@@ -7,6 +7,7 @@ import { Sequence, Screen } from "./Sequence";
 //import Screen from "./Sequence";
 
 interface ViewerProps {
+    profile: string;
 }
 
 interface ViewerState {
@@ -23,12 +24,14 @@ class Viewer extends React.Component<ViewerProps, ViewerState> {
     constructor(props: ViewerProps) {
         super(props);
         
-        this.sequence = new Sequence();
+        this.sequence = new Sequence(this.props.profile);
         this.state = {
             image:     null,
             name: "null",
             displayTime: 0
         };
+
+        console.log(`ViewerScreen: profile: ${this.props.profile}`);
 
         this.timeout = null;
     }
