@@ -1,10 +1,7 @@
 import React from 'react';
-
-import './App.css';
-import { MyCanvas } from './components/Canvas';
-
-import { Sequence, Screen } from "./Sequence";
-//import Screen from "./Sequence";
+import { MyCanvas } from "./Canvas";
+import TimeBug from "./TimeBug"
+import { Sequence, Screen } from "../Sequence";
 
 interface ViewerProps {
     profile: string;
@@ -12,8 +9,11 @@ interface ViewerProps {
 
 interface ViewerState {
     image: any | null;
-    name: string;
+    type: string;
+    resource: string;
     displayTime: number;
+    message: string;
+    timeBug: string;
 }
 
 class Viewer extends React.Component<ViewerProps, ViewerState> {
@@ -27,8 +27,11 @@ class Viewer extends React.Component<ViewerProps, ViewerState> {
         this.sequence = new Sequence(this.props.profile);
         this.state = {
             image:     null,
-            name: "null",
-            displayTime: 0
+            type: "",
+            resource: "",
+            displayTime: 0,
+            message: "",
+            timeBug: ""
         };
 
         console.log(`ViewerScreen: profile: ${this.props.profile}`);
@@ -36,14 +39,36 @@ class Viewer extends React.Component<ViewerProps, ViewerState> {
         this.timeout = null;
     }
 
+    showFirstScreen = (): void => {
+        this.setState({
+            image: null,
+            type: "time",
+            resource: "",
+            displayTime: 20,
+            message: "Starting...",
+            timeBug: ""          
+        });
+
+        console.log(`ViewerScreen::showFirstScreen for ${this.state.displayTime} secs`);
+
+        this.timeout = setTimeout(() => {
+            this.showNextScreen();
+        }, this.state.displayTime * 1000)
+    }
+
+
     showNextScreen = (): void => {
         let nextItem: Screen = this.sequence.getNext();
         this.setState({
             image: nextItem.image,
-            name: nextItem.resource,
-            displayTime: nextItem.displaySecs            
+            type: nextItem.type,
+            resource: nextItem.resource,
+            displayTime: nextItem.displaySecs,
+            message: nextItem.message,   
+            timeBug: nextItem.timeBug       
         });
-        console.log(`ViewerScreen::showNextScreen - ${nextItem.friendlyName}, for ${this.state.displayTime} secs`);
+
+        console.log(`ViewerScreen::showNextScreen - ${nextItem.type} ${nextItem.friendlyName}, for ${this.state.displayTime} secs`);
 
         this.timeout = setTimeout(() => {
             this.showNextScreen();
@@ -53,7 +78,7 @@ class Viewer extends React.Component<ViewerProps, ViewerState> {
     async componentDidMount() {  
         await this.sequence.start();
 
-        this.showNextScreen();
+        this.showFirstScreen();
 
         //document.addEventListener('mousedown', this.handleClick);
     }
@@ -117,10 +142,11 @@ class Viewer extends React.Component<ViewerProps, ViewerState> {
     }
 
     render() {
-        //console.log("Viewer::render");
+        console.log(`Viewer::render: ${this.state.resource}, bug:${this.state.timeBug}, msg: ${this.state.message}`);
         return (
             <div id="myViewer" className="Viewer">
-                <MyCanvas image ={this.state.image} name = {this.state.name}/>
+                <MyCanvas type = {this.state.type} image = {this.state.image} resource = {this.state.resource} message = {this.state.message}/>
+                <TimeBug timeBug = {this.state.timeBug}/>
             </div>
         )
     }

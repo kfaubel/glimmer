@@ -8,6 +8,80 @@ body {
     background: rgb(94, 174, 253);
 }
 
+.float-time-bug-upper-right-dark {
+    position: fixed;
+    right: 50px;
+    top: 30px;
+    width: 120px;
+    height: 45px;
+    z-index: 9999;
+    cursor: pointer;
+    border-radius: 20px;
+    border-width: 4px;
+    visibility: visible;
+    color: #004;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+    background-color: transparent;
+    border-color: #004
+}
+
+.float-time-bug-lower-right-dark {
+    position: fixed;
+    right: 50px;
+    bottom: 6%;
+    width: 120px;
+    height: 45px;
+    z-index: 9999;
+    cursor: pointer;
+    border-radius: 20px;
+    border-width: 4px;
+    visibility: visible;
+    color: #004;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+    background-color: transparent;
+    border-color: #004
+}.float-time-bug-upper-right-light {
+    position: fixed;
+    right: 50px;
+    top: 30px;
+    width: 120px;
+    height: 45px;
+    z-index: 9999;
+    cursor: pointer;
+    border-radius: 20px;
+    border-width: 4px;
+    visibility: visible;
+    color: #CCF;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+    background-color: transparent;
+    border-color: #CCF;
+}
+
+.float-time-bug-lower-right-light {
+    position: fixed;
+    right: 50px;
+    bottom: 6%;
+    width: 120px;
+    height: 45px;
+    z-index: 9999;
+    cursor: pointer;
+    border-radius: 20px;
+    border-width: 4px;
+    visibility: visible;
+    color: #CCF;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+    background-color: transparent;
+    border-color: #CCF;
+}
+
 .Login {
   background-color:#93C9FF;
 }

@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 
 import './App.css';
 
-import ViewerScreen from "./ViewerScreen"
+import ViewerScreen from "./components/ViewerScreen"
 
 // withRouter was dropped from react v6.  This is the little part that enabled params 
 // and works with React class components.
@@ -31,11 +31,16 @@ interface AppProps {
 };
 
 class App extends React.Component<AppProps>  {
-
+    profile = "";
     constructor(props: AppProps) {
         super(props);
 
-        console.log(`Profile: ${this.props.params.profile}`)
+        if (typeof this.props.params.profile === "string")
+           this.profile = this.props.params.profile;
+        else
+            this.profile = ""; // Profile was not specified
+
+        console.log(`Profile: ${this.profile}`)
 
         this.state = {
             publicUrlPrefix: "",
@@ -45,7 +50,7 @@ class App extends React.Component<AppProps>  {
     render(): React.ReactNode {
         return (
             <div>
-                <ViewerScreen profile={this.props.params.profile}/>
+                <ViewerScreen profile={this.profile} />
             </div>
         )
     }

@@ -1,14 +1,17 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
 export interface Screen {
     enabled?: boolean;
-    month?: string;
+    type: string;             // "time" or "bitmap"
+    month?: string;           // blank or "1:5" for Jan - May
     friendlyName: string;
     nextUpdate?: number;
     resource: string;
     displaySecs: number;
     refreshMinutes: number;
     image?: any | null;
+    message: string;
+    timeBug: string;
 }
 
 export class Sequence {
@@ -26,10 +29,6 @@ export class Sequence {
         this.updatePeriod = 60;
         this.nullCount = 0;
         this.profile = profile;
-
-        //const listJson = JSON.parse('{"screens" : [{"resource": "https://i.imgur.com/Whf10Sd.png", "refreshMinutes": 60, "displaySecs": 6}]}');
-        //this.screenList = listJson.screens;
-        //console.log(JSON.stringify(this.screenList, null, 4));
     }
 
     start = async () => {
@@ -41,10 +40,52 @@ export class Sequence {
     }
 
     getScreenList = async () => {
+        let activeScreens = 0;
+        let message = "";
         try {
-            const response = await axios.get(this.screenListUrlBase + this.profile + ".json", {timeout: 5000});
+            let response: AxiosResponse | null = null;
+            
+            if (this.profile === "") {
+                console.log(`Sequence::getScreenList - No porfile`);
+                message = `http://host:port/<profile> - no profile`;
+                throw new Error("No profile");
+            }
+
+            try {
+                const url = this.screenListUrlBase + this.profile + ".json";
+                console.log(`Sequence::getScreenList - Retreiving: ${url}`)
+                response = await axios.get(url, {timeout: 5000});
+            } catch (err) {
+                if (axios.isAxiosError(err)) {
+                    if (err.response) {
+                        console.log(`Sequence::getScreenList GET result ${err.response.status}`);
+                        message = `Profile '${this.profile}' not found (${err.response.status})`;
+                    } else {
+                        console.log(`Sequence::getScreenList GET result NULL`);
+                        message = `Profile '${this.profile}' unknown error`;
+                    }
+                }
+
+                throw new Error("Error on GET");
+            };
+
+            if (response === null) {
+                console.log("Sequence::getScreenList - response was null");
+                message = "Internal error";
+                throw new Error("Response was null");
+            }
+
+            console.log(`Sequence::getScreenList GET result ${response.status}`);
+
             const serverList: Array<Screen> = response.data.screens;
+            if (typeof serverList !== "object" || serverList.length === 0) {
+                console.log("Sequence::getScreenList - profile was empty or ill formed");
+                message = `Profile '${this.profile}' was empty or ill formed`
+                throw new Error("Profile was empty")
+            }
+
             serverList.forEach((screen) => {
+                screen.image = null;
                 //console.log(JSON.stringify(screen, null, 4));
                 //console.log(`screen.enabled: type: ${typeof screen.enabled}, value: ${screen.enabled}`);
                 if (screen.enabled) {
@@ -59,19 +100,27 @@ export class Sequence {
                             const newResource = resource.replace("[01:10]", indexStr)
                             this.screenList.push({
                                 enabled: true,
+                                type: "bitmap",
                                 friendlyName: screen.friendlyName + "-" + indexStr,
                                 resource: newResource, 
                                 month: screen.month,
                                 refreshMinutes: screen.refreshMinutes, 
                                 displaySecs: screen.displaySecs,
-                                nextUpdate: 0
+                                nextUpdate: 0,
+                                image: null,
+                                message: "",
+                                timeBug: screen.timeBug
                             });
-
+                            activeScreens++;
                             console.log(`Sequence::getScreenList: Adding: ${newResource}`);
                         }
                     } else {
                         screen.nextUpdate = 0;
+                        screen.message = "";
+                        if (typeof screen.timeBug === "undefined")
+                            screen.timeBug = "";
                         this.screenList.push(screen);
+                        activeScreens++;
                         console.log(`Sequence::getScreenList: Adding: ${screen.resource}`)
                     }
                 } else {
@@ -80,7 +129,25 @@ export class Sequence {
             })
 
         } catch (e) {
-            console.log(`Sequence::getScreenList failed to get data ${e}`);
+            console.log(`Sequence::getScreenList failed to get data: ${e}`);
+        }
+
+        if (message === "" && activeScreens === 0) 
+            message = "No active screens";
+
+        if (this.screenList.length === 0) {
+            this.screenList.push({
+                enabled: true,
+                type: "time",
+                friendlyName: "No list",
+                resource: "", 
+                refreshMinutes: 999999, 
+                displaySecs: 60,
+                nextUpdate: 0,
+                image: null,
+                message: message,
+                timeBug: ""
+            });
         }
     }
 
@@ -99,21 +166,41 @@ export class Sequence {
             }
             
             //console.log(`Sequence::update: Checking: ${screen.resource} (${screen.nextUpdate}, time until update ${(screen.nextUpdate - now)/1000} secs`);
-            if (typeof screen.nextUpdate === "undefined" || screen.nextUpdate < now) {
+            if (screen.nextUpdate < now) {
                 console.log(`Sequence::update: Time to update: ${screen.resource}`);
-                let result = await axios({
-                    url: screen.resource,
-                    method: "get",
-                    responseType: "arraybuffer",
-                    timeout: 5000
-                })
 
-                console.log(`Sequence::update: ${screen.resource} GET status: ${result.status}`);
+                if (screen.type === "time") {
+                    // Nothing to do, this screen is generated at display time
+                    return;
+                }
+                
+                let response: AxiosResponse | null = null;
 
-                if (result.status !== 200) {
-                    screen.image = null;
-                } else {
-                    const imageString = Buffer.from(result.data, 'binary').toString('base64');
+                try {
+                    console.log(`Sequence::getScreenList - Retreiving: ${screen.resource}`);
+
+                    response = await axios({
+                        method: "get",
+                        url: screen.resource, 
+                        responseType: "arraybuffer",
+                        timeout: 5000});
+                } catch (err) {
+                    console.log(JSON.stringify(err, null, 4));
+                    if (axios.isAxiosError(err)) {
+                        if (err.response) {
+                            console.log(`Sequence::update GET result ${err.response.status}`);
+                            screen.image = null;
+                        } else {
+                            console.log(`Sequence::getScreenList GET result NULL`);
+                            screen.image = null;
+                        }
+                    }
+                };                
+
+                //console.log(`Sequence::update: ${screen.resource} GET status: ${response.status}`);
+
+                if (response !== null) {
+                    const imageString = Buffer.from(response.data, 'binary').toString('base64');
 
                     let type;
                     if (imageString.charAt(0) === '/') {
@@ -134,8 +221,6 @@ export class Sequence {
                     image.onload = () => {
                         //console.log(`Sequence::update: ${screen.resource} image.onload`);
                         screen.image = image;
-                        // console.dir(image);
-                        // this.showImage(image); - we will do this in Canvas
                     }
 
                     image.onerror = () => {
@@ -145,12 +230,9 @@ export class Sequence {
 
                     // console.log(`Sequence::update: ${screen.resource} type is ${type} again`);
                     const imgStr = "data:image/" + type + ";base64," + imageString;
-                    // console.log(`Sequence::update Assigning data to image: ${imgStr}`);
-                    image.src = imgStr;
+                    image.src = imgStr; // This starts the load.  onload or onerror will be called later
 
                     screen.nextUpdate = now + (screen.refreshMinutes * 60 * 1000);
-                    //console.log(`Sequence::update Updated next update to ${screen.nextUpdate}`);
-                    //console.log(`Sequence::update (update-time - now)/60 seconds ${(screen.nextUpdate - now)/60}`);
                 }
             } else {
                 const secsTilUpdate = (screen.nextUpdate - now)/1000;
@@ -162,21 +244,26 @@ export class Sequence {
     }
    
     getNext = (): Screen => {
-        let item: Screen = this.screenList[this.nextIndex] as Screen;
-
-        if (item.image === null && this.nullCount < 2) {
-            // Don't advance the index on a null image the first 2 times
-            this.nullCount++
-        } else {
-            this.nextIndex++
+        if (this.screenList.length === 0) {
+            // Once the screenlist is loaded it will have at least one entry, even if its the "No list" time screen.
+            // So, at this point, getScreenList has not finished.
+            const startImage:Screen = {
+                image: null, 
+                type: "time",
+                displaySecs: 10, 
+                nextUpdate: 0, 
+                refreshMinutes: 0, 
+                resource: "", 
+                friendlyName: "Still starting", 
+                message: "Still starting...",
+                timeBug: ""};
+            return startImage;
         }
 
-        if (item.image === null ) {
-            console.log(`Sequence::getNext: returning null image with 5 sec duration`)
-            const nullImage:Screen = {image: null, displaySecs: 5, nextUpdate: 0, refreshMinutes: 0, resource: "", friendlyName: "null"};
-            return nullImage;
-        }
+        const item: Screen = this.screenList[this.nextIndex] as Screen;
 
+        this.nextIndex++;
+        
         if (this.nextIndex >= this.screenList.length)
             this.nextIndex = 0;
 
