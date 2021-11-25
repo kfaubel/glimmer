@@ -12,36 +12,36 @@ function TimeBug(props: TimeBugProps) {
     switch (props.timeBug) {
         case "lower-right-light":
             return (
-            <button
+            <div
                 id="time-bug"
-                className="float-time-bug-lower-right-light">
+                className="time-bug time-bug-lower-right-light">
                 {timeStr}
-            </button>
+            </div>
             );
         case "lower-right-dark":
             return (
-            <button
+            <div
                 id="time-bug"
-                className="float-time-bug-lower-right">
+                className="time-bug time-bug-lower-right-dark">
                 {timeStr}
-            </button>
+            </div>
             );
-            case "upper-right-light":
-                return (
-                <button
-                    id="time-bug"
-                    className="float-time-bug-upper-right-light">
-                    {timeStr}
-                </button>
-                );
-            case "upper-right-dark":
-                return (
-                <button
-                    id="time-bug"
-                    className="float-time-bug-upper-right-dark">
-                    {timeStr}
-                </button>
-                );
+        case "upper-right-light":
+            return (
+            <div
+                id="time-bug"
+                className="time-bug time-bug-upper-right-light">
+                {timeStr}
+            </div>
+            );
+        case "upper-right-dark":
+            return (
+            <div
+                id="time-bug"
+                className="time-bug time-bug-upper-right-dark">
+                {timeStr}
+            </div>
+            );
         default:
             return(null);
     }
