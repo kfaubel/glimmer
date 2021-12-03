@@ -68,7 +68,11 @@ class Viewer extends React.Component<ViewerProps, ViewerState> {
             timeBug: nextItem.timeBug       
         });
 
-        console.log(`ViewerScreen::showNextScreen - ${nextItem.type} ${nextItem.friendlyName}, for ${this.state.displayTime} secs`);
+        if (nextItem.image === null) {
+            console.log(`ViewerScreen::showNextScreen - NULL image, ${nextItem.type} ${nextItem.friendlyName}, for ${this.state.displayTime} secs`);
+        } else {
+            console.log(`ViewerScreen::showNextScreen - ${nextItem.type} ${nextItem.friendlyName}, for ${this.state.displayTime} secs`);
+        }
 
         this.timeout = setTimeout(() => {
             this.showNextScreen();

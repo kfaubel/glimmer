@@ -34,13 +34,22 @@ export class MyCanvas extends React.Component {
     fadeInImage(ctx: CanvasRenderingContext2D, image: HTMLImageElement, x: number, y: number, w: number, h: number) {
         return new Promise<void>(function (resolve, reject) {
             let opacity = 0;
-            function fade() {
-                if ((opacity += .05) < 1) {
-                    ctx.globalAlpha = opacity;
+            const startTime = new Date().getTime();
+            function fade() {         
+                const now = new Date().getTime();
+                // If its been more that 1/2 second, just finish
+                if (now - startTime > 500) {
+                    ctx.globalAlpha = 0;
                     ctx.drawImage(image, x, y, w, h);
-                    requestAnimationFrame(fade); // Queue next frame
+                    resolve();
                 } else {
-                    resolve(); // done
+                    if ((opacity += .05) < 1) {
+                        ctx.globalAlpha = opacity;
+                        ctx.drawImage(image, x, y, w, h);
+                        requestAnimationFrame(fade); // Queue next frame
+                    } else {
+                        resolve();  // done
+                    }
                 }
             }
             fade(); // Start the fade
@@ -50,13 +59,22 @@ export class MyCanvas extends React.Component {
     fadeOutImage(ctx: CanvasRenderingContext2D, image: HTMLImageElement, x: number, y: number, w: number, h: number) {
         return new Promise<void>(function (resolve, reject) {
             let opacity = 1;
-            function fade() {
-                if ((opacity -= .05) > 0) {
-                    ctx.globalAlpha = opacity;
+            const startTime = new Date().getTime();
+            function fade() {         
+                const now = new Date().getTime();
+                // If its been more that 1/2 second, just finish
+                if (now - startTime > 500) {
+                    ctx.globalAlpha = 0;
                     ctx.drawImage(image, x, y, w, h);
-                    requestAnimationFrame(fade); // Queue next frame
+                    resolve();
                 } else {
-                    resolve();  // done
+                    if ((opacity -= .05) > 0) {
+                        ctx.globalAlpha = opacity;
+                        ctx.drawImage(image, x, y, w, h);
+                        requestAnimationFrame(fade); // Queue next frame
+                    } else {
+                        resolve();  // done
+                    }
                 }
             }
             fade(); // Start the fade
@@ -145,6 +163,8 @@ export class MyCanvas extends React.Component {
             ctx.font = '36pt Arial bold';
             
             ctx.fillText(this.props.message, 50, canvas.height - 20);
+
+            this.currentImage = null; // Don't fade this out next time we have a real image
         }
     }
 

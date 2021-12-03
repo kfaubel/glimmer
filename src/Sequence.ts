@@ -190,9 +190,11 @@ export class Sequence {
                         if (err.response) {
                             console.log(`Sequence::update GET result ${err.response.status}`);
                             screen.image = null;
+                            screen.message = `${screen.friendlyName}: ${err.response.status}`
                         } else {
                             console.log(`Sequence::getScreenList GET result NULL`);
                             screen.image = null;
+                            screen.message = `${screen.friendlyName}: GET - no response`
                         }
                     }
                 };                
@@ -226,6 +228,7 @@ export class Sequence {
                     image.onerror = () => {
                         console.error(`Sequence::update: ${screen.resource} image.onerror`);
                         screen.image = null;
+                        screen.message = `${screen.friendlyName}: Failed to load image data`
                     }
 
                     // console.log(`Sequence::update: ${screen.resource} type is ${type} again`);
