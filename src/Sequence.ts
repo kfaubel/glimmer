@@ -1,8 +1,10 @@
 import axios, { AxiosResponse } from 'axios';
+// This is like node's builtin Buffer but works in the browser
+//import Buffer from "buffer/";
+const Buffer = require('buffer/').Buffer
 
-export interface Screen {
+export interface ScreenItem {
     enabled?: boolean;
-    type: string;             // "time" or "bitmap"
     month?: string;           // blank or "1:5" for Jan - May
     friendlyName: string;
     nextUpdate?: number;
@@ -10,16 +12,16 @@ export interface Screen {
     displaySecs: number;
     refreshMinutes: number;
     image?: any | null;
+    imageUri: string;
     message: string;
     timeBug: string;
 }
 
 export class Sequence {
     nextIndex: number;
-    screenList: Array<Screen>;
+    screenList: Array<ScreenItem>;
     updatePeriod: number;
     nullCount: number;
-    intervalTimer: any;
     profile: string;
     screenListUrlBase = "http://glimmerhub.com/config/"
 
@@ -33,13 +35,15 @@ export class Sequence {
 
     start = async () => {
         await this.getScreenList();
+        setInterval(this.getScreenList, 24 * 60 * 60 * 1000);
 
-        this.update(); // Do it once now.
-        
-        this.intervalTimer = setInterval(this.update, 60*1000);
+        await this.update(); // Do it once now.
+        setInterval(this.update, 60*1000);
     }
 
     getScreenList = async () => {
+        this.screenList = []; // Replace the current list
+
         let activeScreens = 0;
         let message = "";
         try {
@@ -77,56 +81,132 @@ export class Sequence {
 
             console.log(`Sequence::getScreenList GET result ${response.status}`);
 
-            const serverList: Array<Screen> = response.data.screens;
+            const serverList: Array<ScreenItem> = response.data.screens;
             if (typeof serverList !== "object" || serverList.length === 0) {
                 console.log("Sequence::getScreenList - profile was empty or ill formed");
                 message = `Profile '${this.profile}' was empty or ill formed`
                 throw new Error("Profile was empty")
             }
 
-            serverList.forEach((screen) => {
+            let parseErrors = "";
+            serverList.forEach((screen, index) => {
                 screen.image = null;
+                screen.nextUpdate = 0;
+                screen.imageUri = "";
+                screen.message = "";
+                
                 //console.log(JSON.stringify(screen, null, 4));
                 //console.log(`screen.enabled: type: ${typeof screen.enabled}, value: ${screen.enabled}`);
-                if (screen.enabled) {
-                    // "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/googleTopTen-[01:10].jpg",
-                    if (screen.resource.includes("[01:10]")) {                    
-                        const resource = screen.resource;
-                        for (let i = 1; i <= 10; i++) {
-                            let indexStr = `${i}`;
-                            if (indexStr.length === 1) {
-                                indexStr = "0" + indexStr;
-                            }
-                            const newResource = resource.replace("[01:10]", indexStr)
-                            this.screenList.push({
-                                enabled: true,
-                                type: "bitmap",
-                                friendlyName: screen.friendlyName + "-" + indexStr,
-                                resource: newResource, 
-                                month: screen.month,
-                                refreshMinutes: screen.refreshMinutes, 
-                                displaySecs: screen.displaySecs,
-                                nextUpdate: 0,
-                                image: null,
-                                message: "",
-                                timeBug: screen.timeBug
-                            });
-                            activeScreens++;
-                            console.log(`Sequence::getScreenList: Adding: ${newResource}`);
+
+                // Enabled and friendlyName must both be specified or its an error, even if enabled is false
+                if (typeof screen.enabled !== "boolean") {
+                    parseErrors += `Item: ${index} - invalid enabled element, skipping\n`;
+                    return; // This is a continue in a forEach()
+                }
+                
+                // Check the friendlyName
+                if (typeof screen.friendlyName !== "string" || screen.friendlyName.length > 50) {
+                    parseErrors += `Item: ${index} - invalid friendlyName, skipping\n`;
+                    return;
+                }
+                 
+                // Now check to see if we should skip this one
+                if (!screen.enabled) {
+                    console.log(`Skipping disabled ${screen.friendlyName}`);
+                    return; // Skip this one
+                }
+                
+                // Check the resource
+                // We are not going to check to see if this is valid URL
+                if (typeof screen.resource !== "string" || screen.resource.length < 10 || screen.resource.length > 200) {
+                    parseErrors += `Item: ${index} (${screen.friendlyName})- invalid resource, length must be 10-200, skipping\n`;
+                    return;
+                }
+
+                // Check the month
+                if (typeof screen.month === "undefined") {
+                    // all good, this is optional
+                } else if (typeof screen.month !== "string") {
+                    parseErrors += `Item: ${index} (${screen.friendlyName}) - month not a string, skipping\n`;
+                    return;
+                }
+
+                // Check the refreshMinutes
+                if (typeof screen.refreshMinutes !== "string") {
+                    parseErrors += `Item: ${index} (${screen.friendlyName}) - refreshMinutes is not a string, skipping\n`;
+                    return;
+                }
+
+                const refreshMinutes = parseInt(screen.refreshMinutes);
+                if (isNaN(refreshMinutes)) {
+                    parseErrors += `Item: ${index} (${screen.friendlyName}) - refreshMinutes is not a valid number, skipping\n`;
+                    return;
+                }
+
+                if (refreshMinutes < 5 || refreshMinutes > 24 * 60) {
+                    parseErrors += `Item: ${index} (${screen.friendlyName}) - refreshMinutes is less than 5 or greater than 1440, skipping\n`;
+                    return;
+                }
+
+                // Check the displaySecs
+                if (typeof screen.displaySecs !== "string") {
+                    parseErrors += `Item: ${index} (${screen.friendlyName}} - displaySecs is not a string, skipping\n`;
+                    return;
+                }
+
+                const displaySecs = parseInt(screen.displaySecs);
+                if (isNaN(displaySecs)) {
+                    parseErrors += `Item: ${index} (${screen.friendlyName}) - displaySecs is not a valid number, skipping\n`;
+                    return;
+                }
+
+                if (displaySecs < 5 || displaySecs > 60) {
+                    parseErrors += `Item: ${index} (${screen.friendlyName}) - displaySecs is less than 5 or greater than 60, skipping\n`;
+                    return;
+                }
+
+                // Check the timeBug
+                if (typeof screen.timeBug === "undefined") {
+                    // all good, this is optional
+                    screen.timeBug = "";
+                } else if (typeof screen.timeBug !== "string") {
+                    parseErrors += `Item: ${index} (${screen.friendlyName}) - timeBug not a string, skipping\n`;
+                    return;
+                }
+
+                if (typeof screen.timeBug !== "string") {
+                    parseErrors += `Item: ${index} (${screen.friendlyName}) - displaySecs is not a string, skipping\n`;
+                    return;
+                }
+                        
+                // "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/googleTopTen-[01:10].jpg",
+                if (screen.resource.includes("[01:10]")) {  
+                    const newScreen = JSON.parse(JSON.stringify(screen));  // Full clone of the screen                 
+                    const resource = screen.resource;
+                    for (let i = 1; i <= 10; i++) {
+                        let indexStr = `${i}`;
+                        if (indexStr.length === 1) {
+                            indexStr = "0" + indexStr;
                         }
-                    } else {
-                        screen.nextUpdate = 0;
-                        screen.message = "";
-                        if (typeof screen.timeBug === "undefined")
-                            screen.timeBug = "";
-                        this.screenList.push(screen);
+                        const newResource = resource.replace("[01:10]", indexStr);
+                        newScreen.resource = newResource;
+                        newScreen.friendlyName = screen.friendlyName + "-" + indexStr;
+
+                        this.screenList.push(newScreen);
+                        
                         activeScreens++;
-                        console.log(`Sequence::getScreenList: Adding: ${screen.resource}`)
+                        console.log(`Sequence::getScreenList: Adding: ${newResource}`);
                     }
                 } else {
-                    console.log(`Sequence::getScreenList: Skipping disabled: ${screen.resource}`)
+                    this.screenList.push(screen);
+                    activeScreens++;
+                    console.log(`Sequence::getScreenList: Adding: ${screen.resource}`);
                 }
-            })
+            });
+
+            if (parseErrors.length > 0) {
+                console.log(parseErrors);
+            }
 
         } catch (e) {
             console.log(`Sequence::getScreenList failed to get data: ${e}`);
@@ -138,13 +218,13 @@ export class Sequence {
         if (this.screenList.length === 0) {
             this.screenList.push({
                 enabled: true,
-                type: "time",
                 friendlyName: "No list",
                 resource: "", 
                 refreshMinutes: 999999, 
                 displaySecs: 60,
                 nextUpdate: 0,
                 image: null,
+                imageUri: "",
                 message: message,
                 timeBug: ""
             });
@@ -168,16 +248,11 @@ export class Sequence {
             //console.log(`Sequence::update: Checking: ${screen.resource} (${screen.nextUpdate}, time until update ${(screen.nextUpdate - now)/1000} secs`);
             if (screen.nextUpdate < now) {
                 console.log(`Sequence::update: Time to update: ${screen.resource}`);
-
-                if (screen.type === "time") {
-                    // Nothing to do, this screen is generated at display time
-                    return;
-                }
                 
                 let response: AxiosResponse | null = null;
 
                 try {
-                    console.log(`Sequence::getScreenList - Retreiving: ${screen.resource}`);
+                    console.log(`Sequence::getScreenList - Retrieving: ${screen.resource}`);
 
                     response = await axios({
                         method: "get",
@@ -200,6 +275,16 @@ export class Sequence {
                 };                
 
                 //console.log(`Sequence::update: ${screen.resource} GET status: ${response.status}`);
+
+                // console.log(`response: ${JSON.stringify(response, null, 4)}`);
+
+                // if (response !== null) {
+                //     if (typeof response.data === "undefined") {
+                //         console.log("response.data is undefined");
+                //     } else {
+                //         console.log("resposne.data is defined");
+                //     }
+                // }
 
                 if (response !== null) {
                     const imageString = Buffer.from(response.data, 'binary').toString('base64');
@@ -232,44 +317,62 @@ export class Sequence {
                     }
 
                     // console.log(`Sequence::update: ${screen.resource} type is ${type} again`);
+                    // The imgStr is actually a data URI that can be used to load an image directly
+                    // as in: <img src={imgStr} />
                     const imgStr = "data:image/" + type + ";base64," + imageString;
                     image.src = imgStr; // This starts the load.  onload or onerror will be called later
+                    screen.imageUri = imgStr;
 
                     screen.nextUpdate = now + (screen.refreshMinutes * 60 * 1000);
                 }
             } else {
                 const secsTilUpdate = (screen.nextUpdate - now)/1000;
-                const formattedName = (screen.friendlyName + "                      ").substring(0,20);
+                const formattedName = (screen.friendlyName + "                           ").substring(0,25);
                 console.log(`Sequence::update: ${formattedName} up-to-date, ${secsTilUpdate.toFixed(0)} secs to go`)
             }
-        
         });
     }
    
-    getNext = (): Screen => {
+    getFirst = (): ScreenItem => {
+        const startImage:ScreenItem = {
+            image: null, 
+            imageUri: "dawn.jpg",
+            displaySecs: 10, 
+            nextUpdate: 0, 
+            refreshMinutes: 0, 
+            resource: "", 
+            friendlyName: "Starting (dawn)", 
+            message: "Starting...",
+            timeBug: "lower-right-light"}
+        return startImage;
+    }
+
+    getNext = (): ScreenItem => {
         if (this.screenList.length === 0) {
             // Once the screenlist is loaded it will have at least one entry, even if its the "No list" time screen.
             // So, at this point, getScreenList has not finished.
-            const startImage:Screen = {
+            const startImage:ScreenItem = {
                 image: null, 
-                type: "time",
+                imageUri: "",
                 displaySecs: 10, 
                 nextUpdate: 0, 
                 refreshMinutes: 0, 
                 resource: "", 
                 friendlyName: "Still starting", 
                 message: "Still starting...",
-                timeBug: ""};
+                timeBug: ""
+            };
             return startImage;
         }
 
-        const item: Screen = this.screenList[this.nextIndex] as Screen;
+        const item: ScreenItem = this.screenList[this.nextIndex] as ScreenItem;
 
         this.nextIndex++;
         
         if (this.nextIndex >= this.screenList.length)
             this.nextIndex = 0;
 
+        console.log(`${new Date().toLocaleString()}: getNext() returning: ${item.friendlyName}`);
         return item;
     }
 

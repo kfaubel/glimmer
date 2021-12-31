@@ -1,15 +1,14 @@
-//import React from 'react';
+import React from 'react';
 import dateFormat from "dateformat";
 
 export interface TimeBugProps {
-    timeBug: string;
+    location: string;
 }
 
 function TimeBug(props: TimeBugProps) {
     const now = new Date();
     const timeStr = dateFormat(now, "h:MM TT");
-    console.log("TimeBug");
-    switch (props.timeBug) {
+    switch (props.location) {
         case "lower-right-light":
             return (
             <div
@@ -43,7 +42,7 @@ function TimeBug(props: TimeBugProps) {
             </div>
             );
         default:
-            return(null);
+            return(<></>);
     }
 }
 

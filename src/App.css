@@ -1,11 +1,5 @@
-.Viewer {
-  text-align: center;
-  background: #111;
-}
-
-
 body {
-    background: rgb(94, 174, 253);
+    background: black;
 }
 
 .time-bug {
@@ -20,149 +14,152 @@ body {
     border-width: 4px;
     visibility: visible;
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 40px;
+    font-size: 5vh;
     font-weight: bold;
     background-color: transparent;
 }
 
 .time-bug-upper-right-dark {
-    right: 40px;
-    top: 30px;
+    right: 2%;
+    top: 3%;
     color: #006;
     border-color: #006;
 }
 
 .time-bug-lower-right-dark {
-    right: 20px;
-    bottom: 10px;
+    right: 2%;
+    bottom: 1%;
     color: #006;
     border-color: #006;
 }
 
 .time-bug-upper-right-light {
-    right: 40px;
-    top: 30px;
-    color: #CCF;
-    border-color: #CCF;
+    right: 2%;
+    top: 3%;
+    color: #ccf;
+    border-color: #ccf;
 }
 
 .time-bug-lower-right-light {
-    right: 40px;
-    bottom: 10px;
-    color: #CCF;
-    border-color: #CCF;
+    right: 2%;
+    bottom: 1%;
+    color: #ccf;
+    border-color: #ccf;
 }
 
-.Login {
-  background-color:#93C9FF;
+.message {
+    position: fixed;
+    height: 7%;
+    z-index: 9999;
+    cursor: pointer;
+    visibility: visible;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 6vh;
+    font-weight: bold;
+    background-color: transparent;
+    left: 2%;
+    bottom: 1%;
+    color: #ccf;
 }
 
-#myCanvas { 
-    height: 100vh; 
-    width: 100vw; 
+#screen-image {
+    height: 100vh;
+    width: 100vw;
     display: block;
 }
 
-.float-button-prev {
-  position: fixed;
-  left: 20px;
-  bottom: 50%;
-  z-index: 9999;
-  cursor: pointer;
-  border-radius: 10px;
-  visibility: visible;
-  color: #fff;
-  background-color: #007bff;
-  border-color: #007bff
+.fadeOut {
+    opacity: 0;
 }
 
-.float-button-next {
-  position: fixed;
-  right: 20px;
-  bottom: 50%;
-  z-index: 9999;
-  cursor: pointer;
-  border-radius: 10px;
-  visibility: visible;
-  color: #fff;
-  background-color: #007bff;
-  border-color: #007bff
+.fadeIn {
+    animation: fadeInAnimation 1s linear;
+    -webkit-animation: fadeInAnimation 1s;
+    -moz-animation: fadeInAnimation 1s;
+    -o-animation: fadeInAnimation 1s;
+    -ms-animation: fadeInAnimation 1s;
 }
 
-.float-select {
-  position: fixed;
-  top: 10px;
-  left: 50%;
-  z-index: 9999;
-  cursor: pointer;
-  visibility: visible;
-  color: #fff;
-  background-color: #007bff;
-  border-color: #007bff
+@keyframes fadeInAnimation {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 
-.float-button-toggle {
-  position: fixed;
-  right: 20px;
-  bottom: 80px;
-  z-index: 9999;
-  cursor: pointer;
-  visibility: visible;
-  color: #fff;
-  background-color: #007bff;
-  border-color: #007bff
-}
-      
-.k-fadeOut {
-  visibility: hidden;
-  opacity: 0;
-  transition: 1.5s ease-out
+@-moz-keyframes fadeInAnimation {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 
-.k-fadeIn {
-  visibility: visible;
-  opacity: 1;
-  transition: .5s ease-in
+@-webkit-keyframes fadeInAnimation {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 
-.slidecontainer {
-  position: fixed;
-  bottom: 10px;
-  z-index: 9999;
-  width: 100%;
+@-o-keyframes fadeInAnimation {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 
-.slider {
-  -webkit-appearance: none;
-  width: 100%;
-  height: 7px;
-  border-radius: 2px; 
-  background: #f1f1f3;
-  outline: none;
-  opacity: 0.6;
-  -webkit-transition: .2s;
-  transition: opacity .2s;
+@-ms-keyframes fadeInAnimation {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 
-.slider:hover {
-  background: #ffffff;
-  opacity: 1;
+.App {
+    text-align: center;
 }
 
-.slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 10px;
-  height: 15px;
-  border-radius: 50%; 
-  background: #007bff;
-  cursor: pointer;
+.App-logo {
+    height: 40vmin;
+    pointer-events: none;
 }
 
-.slider::-moz-range-thumb {
-  width: 10px;
-  height: 15px;
-  border-radius: 50%;
-  background: #007bff;
-  cursor: pointer;
+@media (prefers-reduced-motion: no-preference) {
+    .App-logo {
+        animation: App-logo-spin infinite 20s linear;
+    }
+}
+
+.App-header {
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+}
+
+.App-link {
+    color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }

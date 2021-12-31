@@ -1,59 +1,53 @@
+import "./App.css";
+import TimeBug from "./TimeBug";
+import Message from "./Message";
+import { Sequence, ScreenItem } from "./Sequence";
 import React from "react";
-import { useParams } from "react-router-dom";
 
-import './App.css';
+export interface AppProps {
+    sequencer: Sequence;
+}
 
-import ViewerScreen from "./components/ViewerScreen"
+let timeout: NodeJS.Timeout;
 
-// withRouter was dropped from react v6.  This is the little part that enabled params 
-// and works with React class components.
-// 
-// Next step will be to rewrite this using functional components.
-const withRouter = (WrappedComponent: any) => {
-    return (props: any) => {
-        const params = useParams();
-    
-        return (
-            <WrappedComponent
-                {...props}
-                params={params}
-            />
-        );
+function App(props: AppProps) {
+
+    // Steps
+    // * setup the useState hook to get the update function for the screen
+    // * setup the useState hook to get the update function for the timeout 
+    // * Start the timeout cycle if the current timeout is undefined
+
+    const [screen, updateScreen] = React.useState<ScreenItem>(props.sequencer.getFirst());
+    const [className, updateClassName] = React.useState<string>("fadeOut");
+   
+    const update = () => {
+        updateClassName("fadeOut"); // This is really just a quick switch to opacity 0 to show the black background
+        updateScreen(props.sequencer.getNext());
     };
-};
 
-interface AppParams {
-    profile: string;
-}
-interface AppProps {
-    params: AppParams;
-    x?: string;
-};
-
-class App extends React.Component<AppProps>  {
-    profile = "";
-    constructor(props: AppProps) {
-        super(props);
-
-        if (typeof this.props.params.profile === "string")
-           this.profile = this.props.params.profile;
-        else
-            this.profile = ""; // Profile was not specified
-
-        console.log(`Profile: ${this.profile}`)
-
-        this.state = {
-            publicUrlPrefix: "",
-        };
+    const animate = () => {
+        updateClassName("fadeIn");
     }
 
-    render(): React.ReactNode {
-        return (
-            <div>
-                <ViewerScreen profile={this.profile} />
-            </div>
-        )
-    }
+    // Set the update trigger when this image has been displayed for long enough
+    clearTimeout(timeout); // Make sure we don't somehow get 2 of these queued
+    timeout = setTimeout(update, (screen as ScreenItem).displaySecs * 1000);  
+
+    // Let the image go black with the fadeOut and, after 10 seconds, start the fade in
+    let timeout2 = setTimeout(animate, 10); // start the 
+
+    console.log(`${new Date().toLocaleString()}: App returning screen: ${(screen as ScreenItem).friendlyName}`);
+    return (
+        <div className="App" id="myApp">
+            <img className={className} 
+                 id="screen-image" 
+                 src={(screen as ScreenItem).imageUri} 
+                 alt={(screen as ScreenItem).friendlyName}
+            />
+            <TimeBug location={(screen as ScreenItem).timeBug} />
+            <Message message={(screen as ScreenItem).message} />
+        </div>
+    );
 }
 
-export default withRouter(App);
+export default App;
