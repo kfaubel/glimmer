@@ -180,14 +180,15 @@ export class Sequence {
                 }
                         
                 // "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/googleTopTen-[01:10].jpg",
-                if (screen.resource.includes("[01:10]")) {  
-                    const newScreen = JSON.parse(JSON.stringify(screen));  // Full clone of the screen                 
-                    const resource = screen.resource;
+                if (screen.resource.includes("[01:10]")) {                  
                     for (let i = 1; i <= 10; i++) {
+                        const newScreen = JSON.parse(JSON.stringify(screen));  // Full clone of the screen 
+
                         let indexStr = `${i}`;
                         if (indexStr.length === 1) {
                             indexStr = "0" + indexStr;
                         }
+                        const resource = screen.resource;
                         const newResource = resource.replace("[01:10]", indexStr);
                         newScreen.resource = newResource;
                         newScreen.friendlyName = screen.friendlyName + "-" + indexStr;
