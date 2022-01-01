@@ -1,8 +1,10 @@
 import ReactDOM from 'react-dom';
-import './index.css';
+//import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { Sequence } from './Sequence';
+
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const sequence = new Sequence("ken");
 sequence.start(); // Loads the screen list, sets an interval timer to update each screen image.
