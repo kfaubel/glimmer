@@ -34,7 +34,7 @@ function App(props: AppProps) {
     timeout = setTimeout(update, (screen as ScreenItem).displaySecs * 1000);  
 
     // Let the image go black with the fadeOut and, after 10 seconds, start the fade in
-    let timeout2 = setTimeout(animate, 10); // start the 
+    setTimeout(animate, 10); // start the 
 
     console.log(`${new Date().toLocaleString()}: App returning screen: ${(screen as ScreenItem).friendlyName}`);
     return (

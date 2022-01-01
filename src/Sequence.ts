@@ -112,7 +112,7 @@ export class Sequence {
                  
                 // Now check to see if we should skip this one
                 if (!screen.enabled) {
-                    console.log(`Skipping disabled ${screen.friendlyName}`);
+                    console.log(`Sequence: Skipping: ${screen.friendlyName}`);
                     return; // Skip this one
                 }
                 
@@ -196,12 +196,12 @@ export class Sequence {
                         this.screenList.push(newScreen);
                         
                         activeScreens++;
-                        console.log(`Sequence::getScreenList: Adding: ${newResource}`);
+                        console.log(`Sequence: Adding:   ${newScreen.friendlyName}  - ${newResource}`);
                     }
                 } else {
                     this.screenList.push(screen);
                     activeScreens++;
-                    console.log(`Sequence::getScreenList: Adding: ${screen.resource}`);
+                    console.log(`Sequence: Adding:   ${screen.friendlyName}  - ${screen.resource}`);
                 }
             });
 
@@ -253,8 +253,6 @@ export class Sequence {
                 let response: AxiosResponse | null = null;
 
                 try {
-                    console.log(`Sequence::getScreenList - Retrieving: ${screen.resource}`);
-
                     response = await axios({
                         method: "get",
                         url: screen.resource, 
@@ -337,7 +335,7 @@ export class Sequence {
     getFirst = (): ScreenItem => {
         const startImage:ScreenItem = {
             image: null, 
-            imageUri: "dawn.jpg",
+            imageUri: process.env.PUBLIC_URL + "/dawn.jpg",
             displaySecs: 10, 
             nextUpdate: 0, 
             refreshMinutes: 0, 

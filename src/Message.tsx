@@ -1,5 +1,4 @@
 import React from 'react';
-import dateFormat from "dateformat";
 
 export interface MessageProps {
     message: string;
