@@ -371,7 +371,7 @@ export class Sequence {
         if (this.nextIndex >= this.screenList.length)
             this.nextIndex = 0;
 
-        console.log(`${new Date().toLocaleString()}: getNext() returning: ${item.friendlyName}`);
+        //console.log(`${new Date().toLocaleString()}: getNext() returning: ${item.friendlyName}`);
         return item;
     }
 

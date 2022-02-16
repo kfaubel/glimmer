@@ -10,42 +10,67 @@ export interface AppProps {
 
 let timeout: NodeJS.Timeout;
 
-function App(props: AppProps) {
+const App = (props: AppProps) => {
+//function App(props: AppProps) {
+    //console.log("In App Props: " + JSON.stringify(props, null, 4));
+    //console.trace("In App...");
 
     // Steps
     // * setup the useState hook to get the update function for the screen
     // * setup the useState hook to get the update function for the timeout 
     // * Start the timeout cycle if the current timeout is undefined
 
-    const [screen, updateScreen] = React.useState<ScreenItem>(props.sequencer.getFirst());
-    const [className, updateClassName] = React.useState<string>("fadeOut");
+    // useState take a value with the initial value or a function that returns the initial value
+    // useState return an array with two value, 
+    // - first is the current value of the state variable
+    // - second is a function that we can use to assign new values 
+    //const [screen, updateScreen] = React.useState<ScreenItem>(props.sequencer.getFirst());
+    //const [className, updateClassName] = React.useState<string>("fadeOut");
+
+    const [screenState, updateScreenState] = React.useState({screen: props.sequencer.getFirst(), fade: ""});
    
-    const update = () => {
-        updateClassName("fadeOut"); // This is really just a quick switch to opacity 0 to show the black background
-        updateScreen(props.sequencer.getNext());
+    console.log(`${new Date().toLocaleString()}:${new Date().getMilliseconds()}: App starting  screen: ${screenState.screen.friendlyName}, fade: ${screenState.fade}`);
+
+    const fadeOut = (screen: any) => {
+        console.log(`${new Date().toLocaleString()}:${new Date().getMilliseconds()}: fadeOut(): screen: ${screen.friendlyName}, Updating fade prop to: fadeOut`);
+        updateScreenState({screen: screen, fade: "fadeOut"}); 
+        setTimeout(fadeInNew, 100, screen);  
     };
 
-    const animate = () => {
-        updateClassName("fadeIn");
+    // Set the update trigger when this image has been displayed for long enough
+    //clearTimeout(timeout); // Make sure we don't somehow get 2 of these queued
+    //timeout = setTimeout(fadeOut, (screenState.screen as ScreenItem).displaySecs * 1000);  
+
+    const fadeInNew = (screen: any) => {
+        const newScreen = props.sequencer.getNext();
+        console.log(`${new Date().toLocaleString()}:${new Date().getMilliseconds()}: fadeInNew(): Previous screen: ${screen.friendlyName}, fade: ${screenState.fade}`);
+        console.log(`${new Date().toLocaleString()}:${new Date().getMilliseconds()}: fadeInNew(): Updating screen: ${newScreen.friendlyName}, fade: fadeIn`);
+        
+        updateScreenState({screen: newScreen, fade: "fadeIn"});
+
+        clearTimeout(timeout); // Make sure we don't somehow get 2 of these queued
+        timeout = setTimeout(fadeOut, (newScreen as ScreenItem).displaySecs * 1000, newScreen);  
     }
 
-    // Set the update trigger when this image has been displayed for long enough
-    clearTimeout(timeout); // Make sure we don't somehow get 2 of these queued
-    timeout = setTimeout(update, (screen as ScreenItem).displaySecs * 1000);  
+    if (screenState.fade === "") {
+        console.log(`${new Date().toLocaleString()}:${new Date().getMilliseconds()}: First time, setting fadeOut timeout`);
+        timeout = setTimeout(fadeOut, 10000, screenState.screen);
+    } 
 
-    // Let the image go black with the fadeOut and, after 10 seconds, start the fade in
-    setTimeout(animate, 10); // start the 
+    // Let the image go black with the fadeOut and, after 1000ms, start the fade in
+    //setTimeout(animate, 1000);  
 
-    console.log(`${new Date().toLocaleString()}: App returning screen: ${(screen as ScreenItem).friendlyName}`);
+    console.log(`${new Date().toLocaleString()}:${new Date().getMilliseconds()}: App returning screen: ${(screenState.screen as ScreenItem).friendlyName}, className: ${screenState.fade}`);
+    //console.log(JSON.stringify(screenState.screen, null, 4));
     return (
         <div className="App" id="myApp">
-            <img className={className} 
+            <img className={screenState.fade} 
                  id="screen-image" 
-                 src={(screen as ScreenItem).imageUri} 
-                 alt={(screen as ScreenItem).friendlyName}
+                 src={(screenState.screen as ScreenItem).imageUri} 
+                 alt={(screenState.screen as ScreenItem).friendlyName}
             />
-            <TimeBug location={(screen as ScreenItem).timeBug} />
-            <Message message={(screen as ScreenItem).message} />
+            <TimeBug location={(screenState.screen as ScreenItem).timeBug} />
+            <Message message={(screenState.screen as ScreenItem).message} />
         </div>
     );
 }

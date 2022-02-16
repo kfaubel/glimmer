@@ -1,5 +1,9 @@
 body {
-    background: black;
+    background-color: black;
+}
+
+#myApp {
+    background-color: black;
 }
 
 .time-bug {
@@ -66,11 +70,40 @@ body {
     height: 100vh;
     width: 100vw;
     display: block;
+    background: black;
 }
 
 .fadeOut {
     opacity: 0;
 }
+
+.fadeOutZZZ {
+    animation: fadeOutAnimation .2s linear;
+    -webkit-animation: fadeOutAnimation .2s;
+    -moz-animation: fadeOutAnimation .2s;
+    -o-animation: fadeOutAnimation .2s;
+    -ms-animation: fadeOutAnimation .2s;
+}
+
+@keyframes fadeOutAnimation {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@-webkit-keyframes fadeOutAnimation {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+
 
 .fadeIn {
     animation: fadeInAnimation 1s linear;
@@ -122,44 +155,5 @@ body {
     }
     100% {
         opacity: 1;
-    }
-}
-
-.App {
-    text-align: center;
-}
-
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
-}
-
-.App-header {
-    background-color: #282c34;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
-}
-
-.App-link {
-    color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
     }
 }
