@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 // This is like node's builtin Buffer but works in the browser
 //import Buffer from "buffer/";
 const Buffer = require('buffer/').Buffer
@@ -249,17 +249,24 @@ export class Sequence {
             //console.log(`Sequence::update: Checking: ${screen.resource} (${screen.nextUpdate}, time until update ${(screen.nextUpdate - now)/1000} secs`);
             if (screen.nextUpdate < now) {
                 console.log(`Sequence::update: Time to update: ${screen.resource}`);
-                
-                let response: AxiosResponse | null = null;
 
-                try {
-                    response = await axios({
-                        method: "get",
-                        url: screen.resource, 
-                        responseType: "arraybuffer",
-                        timeout: 5000});
-                } catch (err) {
-                    console.log(JSON.stringify(err, null, 4));
+                const options: AxiosRequestConfig = {
+                    responseType: "arraybuffer",
+                    // The following header causes  a CORS error
+                    // headers: {                        
+                    //     "Content-Encoding": "gzip"
+                    // },
+                    timeout: 20000
+                };
+
+                let screenData: Buffer | null = null;
+                
+                await axios.get(screen.resource, options)
+                    .then((res: AxiosResponse) => {
+                        screenData = res?.data;
+                    })
+                    .catch((err) => {
+                        console.log(JSON.stringify(err, null, 4));
                     if (axios.isAxiosError(err)) {
                         if (err.response) {
                             console.log(`Sequence::update GET result ${err.response.status}`);
@@ -271,7 +278,31 @@ export class Sequence {
                             screen.message = `${screen.friendlyName}: GET - no response`
                         }
                     }
-                };                
+                    });
+
+
+
+
+                // try {
+                //     response = await axios({
+                //         method: "get",
+                //         url: screen.resource, 
+                //         responseType: "arraybuffer",
+                //         timeout: 5000});
+                // } catch (err) {
+                //     console.log(JSON.stringify(err, null, 4));
+                //     if (axios.isAxiosError(err)) {
+                //         if (err.response) {
+                //             console.log(`Sequence::update GET result ${err.response.status}`);
+                //             screen.image = null;
+                //             screen.message = `${screen.friendlyName}: ${err.response.status}`
+                //         } else {
+                //             console.log(`Sequence::getScreenList GET result NULL`);
+                //             screen.image = null;
+                //             screen.message = `${screen.friendlyName}: GET - no response`
+                //         }
+                //     }
+                // };                
 
                 //console.log(`Sequence::update: ${screen.resource} GET status: ${response.status}`);
 
@@ -285,8 +316,8 @@ export class Sequence {
                 //     }
                 // }
 
-                if (response !== null) {
-                    const imageString = Buffer.from(response.data, 'binary').toString('base64');
+                if (screenData !== null) {
+                    const imageString = Buffer.from(screenData, 'binary').toString('base64');
 
                     let type;
                     if (imageString.charAt(0) === '/') {
