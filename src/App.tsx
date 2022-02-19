@@ -11,22 +11,15 @@ export interface AppProps {
 let timeout: NodeJS.Timeout;
 
 const App = (props: AppProps) => {
-//function App(props: AppProps) {
-    //console.log("In App Props: " + JSON.stringify(props, null, 4));
-    //console.trace("In App...");
 
-    // Steps
-    // * setup the useState hook to get the update function for the screen
-    // * setup the useState hook to get the update function for the timeout 
-    // * Start the timeout cycle if the current timeout is undefined
-
-    // useState take a value with the initial value or a function that returns the initial value
-    // useState return an array with two value, 
-    // - first is the current value of the state variable
-    // - second is a function that we can use to assign new values 
-    //const [screen, updateScreen] = React.useState<ScreenItem>(props.sequencer.getFirst());
-    //const [className, updateClassName] = React.useState<string>("fadeOut");
-
+    // I am sure this will be completely obvious to my future self :-)
+    //
+    // React.useState takes an initial state {screen: aScreen, fade: a fade}
+    //   screen is a screen object
+    //   fade is a string we assign to the image below
+    // useState returns an array of two items
+    // The first, screenState, is the current state value.  It is an object with 'screen' and 'fade'
+    // The second, updateScreenState, is a function that will update the screenState and cause this function to be called again.
     const [screenState, updateScreenState] = React.useState({screen: props.sequencer.getFirst(), fade: ""});
    
     console.log(`${new Date().toLocaleString()}:${new Date().getMilliseconds()}: App starting  screen: ${screenState.screen.friendlyName}, fade: ${screenState.fade}`);
@@ -37,31 +30,23 @@ const App = (props: AppProps) => {
         setTimeout(fadeInNew, 100, screen);  
     };
 
-    // Set the update trigger when this image has been displayed for long enough
-    //clearTimeout(timeout); // Make sure we don't somehow get 2 of these queued
-    //timeout = setTimeout(fadeOut, (screenState.screen as ScreenItem).displaySecs * 1000);  
-
     const fadeInNew = (screen: any) => {
         const newScreen = props.sequencer.getNext();
-        console.log(`${new Date().toLocaleString()}:${new Date().getMilliseconds()}: fadeInNew(): Previous screen: ${screen.friendlyName}, fade: ${screenState.fade}`);
-        console.log(`${new Date().toLocaleString()}:${new Date().getMilliseconds()}: fadeInNew(): Updating screen: ${newScreen.friendlyName}, fade: fadeIn`);
         
         updateScreenState({screen: newScreen, fade: "fadeIn"});
 
         clearTimeout(timeout); // Make sure we don't somehow get 2 of these queued
-        timeout = setTimeout(fadeOut, (newScreen as ScreenItem).displaySecs * 1000, newScreen);  
+        timeout = setTimeout(fadeOut, (newScreen).displaySecs * 1000, newScreen);  
     }
 
+    // If this is the first time, setup the screen change timeout
     if (screenState.fade === "") {
         console.log(`${new Date().toLocaleString()}:${new Date().getMilliseconds()}: First time, setting fadeOut timeout`);
         timeout = setTimeout(fadeOut, 10000, screenState.screen);
     } 
 
-    // Let the image go black with the fadeOut and, after 1000ms, start the fade in
-    //setTimeout(animate, 1000);  
-
     console.log(`${new Date().toLocaleString()}:${new Date().getMilliseconds()}: App returning screen: ${(screenState.screen as ScreenItem).friendlyName}, className: ${screenState.fade}`);
-    //console.log(JSON.stringify(screenState.screen, null, 4));
+    
     return (
         <div className="App" id="myApp">
             <img className={screenState.fade} 

@@ -46,164 +46,159 @@ export class Sequence {
 
         let activeScreens = 0;
         let message = "";
-        try {
-            let response: AxiosResponse | null = null;
-            
+        try {            
             if (this.profile === "") {
                 console.log(`Sequence::getScreenList - No porfile`);
                 message = `http://host:port/<profile> - no profile`;
                 throw new Error("No profile");
             }
 
-            try {
-                const url = this.screenListUrlBase + this.profile + ".json";
-                console.log(`Sequence::getScreenList - Retreiving: ${url}`)
-                response = await axios.get(url, {timeout: 5000});
-            } catch (err) {
-                if (axios.isAxiosError(err)) {
-                    if (err.response) {
-                        console.log(`Sequence::getScreenList GET result ${err.response.status}`);
-                        message = `Profile '${this.profile}' not found (${err.response.status})`;
-                    } else {
-                        console.log(`Sequence::getScreenList GET result NULL`);
-                        message = `Profile '${this.profile}' unknown error`;
-                    }
-                }
+            const url = this.screenListUrlBase + this.profile + ".json";
+            console.log(`Sequence::getScreenList - Retreiving: ${url}`)
 
-                throw new Error("Error on GET");
+            const options: AxiosRequestConfig = {
+                timeout: 20000
             };
 
-            if (response === null) {
-                console.log("Sequence::getScreenList - response was null");
-                message = "Internal error";
-                throw new Error("Response was null");
-            }
+            let serverList: Array<ScreenItem> = [];
 
-            console.log(`Sequence::getScreenList GET result ${response.status}`);
+            await axios.get(url, options)
+                .then((res: AxiosResponse) => {
+                    console.log(`Sequence::getScreenList GET result ${res.status}`);
+                    if (typeof res.data.screens !== "undefined") {
+                        serverList = res.data.screens as Array<ScreenItem>;
+                    }
+                })
+                .catch((err) => {
+                    //console.log(JSON.stringify(err, null, 4));
+                    if (axios.isAxiosError(err)) {
+                        if (err.response) {
+                            console.log(`Sequence::getScreenList GET result ${err.response.status}`);
+                            message = `Profile '${this.profile}' not found (${err.response.status})`;
+                        } else {
+                            console.log(`Sequence::getScreenList GET result NULL`);
+                            message = `Profile '${this.profile}' unknown error`;
+                        }
+                    }
 
-            const serverList: Array<ScreenItem> = response.data.screens;
-            if (typeof serverList !== "object" || serverList.length === 0) {
-                console.log("Sequence::getScreenList - profile was empty or ill formed");
-                message = `Profile '${this.profile}' was empty or ill formed`
-                throw new Error("Profile was empty")
-            }
+                    //throw new Error("Error on GET");
+                });
 
             let parseErrors = "";
-            serverList.forEach((screen, index) => {
-                screen.image = null;
-                screen.nextUpdate = 0;
-                screen.imageUri = "";
-                screen.message = "";
-                
-                //console.log(JSON.stringify(screen, null, 4));
-                //console.log(`screen.enabled: type: ${typeof screen.enabled}, value: ${screen.enabled}`);
+            if (serverList !== null) {
+                serverList.forEach((screen, index) => {
+                    screen.image = null;
+                    screen.nextUpdate = 0;
+                    screen.imageUri = "";
+                    screen.message = "";
 
-                // Enabled and friendlyName must both be specified or its an error, even if enabled is false
-                if (typeof screen.enabled !== "boolean") {
-                    parseErrors += `Item: ${index} - invalid enabled element, skipping\n`;
-                    return; // This is a continue in a forEach()
-                }
-                
-                // Check the friendlyName
-                if (typeof screen.friendlyName !== "string" || screen.friendlyName.length > 50) {
-                    parseErrors += `Item: ${index} - invalid friendlyName, skipping\n`;
-                    return;
-                }
-                 
-                // Now check to see if we should skip this one
-                if (!screen.enabled) {
-                    console.log(`Sequence: Skipping: ${screen.friendlyName}`);
-                    return; // Skip this one
-                }
-                
-                // Check the resource
-                // We are not going to check to see if this is valid URL
-                if (typeof screen.resource !== "string" || screen.resource.length < 10 || screen.resource.length > 200) {
-                    parseErrors += `Item: ${index} (${screen.friendlyName})- invalid resource, length must be 10-200, skipping\n`;
-                    return;
-                }
-
-                // Check the month
-                if (typeof screen.month === "undefined") {
-                    // all good, this is optional
-                } else if (typeof screen.month !== "string") {
-                    parseErrors += `Item: ${index} (${screen.friendlyName}) - month not a string, skipping\n`;
-                    return;
-                }
-
-                // Check the refreshMinutes
-                if (typeof screen.refreshMinutes !== "string") {
-                    parseErrors += `Item: ${index} (${screen.friendlyName}) - refreshMinutes is not a string, skipping\n`;
-                    return;
-                }
-
-                const refreshMinutes = parseInt(screen.refreshMinutes);
-                if (isNaN(refreshMinutes)) {
-                    parseErrors += `Item: ${index} (${screen.friendlyName}) - refreshMinutes is not a valid number, skipping\n`;
-                    return;
-                }
-
-                if (refreshMinutes < 5 || refreshMinutes > 24 * 60) {
-                    parseErrors += `Item: ${index} (${screen.friendlyName}) - refreshMinutes is less than 5 or greater than 1440, skipping\n`;
-                    return;
-                }
-
-                // Check the displaySecs
-                if (typeof screen.displaySecs !== "string") {
-                    parseErrors += `Item: ${index} (${screen.friendlyName}} - displaySecs is not a string, skipping\n`;
-                    return;
-                }
-
-                const displaySecs = parseInt(screen.displaySecs);
-                if (isNaN(displaySecs)) {
-                    parseErrors += `Item: ${index} (${screen.friendlyName}) - displaySecs is not a valid number, skipping\n`;
-                    return;
-                }
-
-                if (displaySecs < 5 || displaySecs > 60) {
-                    parseErrors += `Item: ${index} (${screen.friendlyName}) - displaySecs is less than 5 or greater than 60, skipping\n`;
-                    return;
-                }
-
-                // Check the timeBug
-                if (typeof screen.timeBug === "undefined") {
-                    // all good, this is optional
-                    screen.timeBug = "";
-                } else if (typeof screen.timeBug !== "string") {
-                    parseErrors += `Item: ${index} (${screen.friendlyName}) - timeBug not a string, skipping\n`;
-                    return;
-                }
-
-                if (typeof screen.timeBug !== "string") {
-                    parseErrors += `Item: ${index} (${screen.friendlyName}) - displaySecs is not a string, skipping\n`;
-                    return;
-                }
-                        
-                // "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/googleTopTen-[01:10].jpg",
-                if (screen.resource.includes("[01:10]")) {                  
-                    for (let i = 1; i <= 10; i++) {
-                        const newScreen = JSON.parse(JSON.stringify(screen));  // Full clone of the screen 
-
-                        let indexStr = `${i}`;
-                        if (indexStr.length === 1) {
-                            indexStr = "0" + indexStr;
-                        }
-                        const resource = screen.resource;
-                        const newResource = resource.replace("[01:10]", indexStr);
-                        newScreen.resource = newResource;
-                        newScreen.friendlyName = screen.friendlyName + "-" + indexStr;
-
-                        this.screenList.push(newScreen);
-                        
-                        activeScreens++;
-                        console.log(`Sequence: Adding:   ${newScreen.friendlyName}  - ${newResource}`);
+                    // Enabled and friendlyName must both be specified or its an error, even if enabled is false
+                    if (typeof screen.enabled !== "boolean") {
+                        parseErrors += `Item: ${index} - invalid enabled element, skipping\n`;
+                        return; // This is a continue in a forEach()
                     }
-                } else {
-                    this.screenList.push(screen);
-                    activeScreens++;
-                    console.log(`Sequence: Adding:   ${screen.friendlyName}  - ${screen.resource}`);
-                }
-            });
+                    
+                    // Check the friendlyName
+                    if (typeof screen.friendlyName !== "string" || screen.friendlyName.length > 50) {
+                        parseErrors += `Item: ${index} - invalid friendlyName, skipping\n`;
+                        return;
+                    }
+                    
+                    // Now check to see if we should skip this one
+                    if (!screen.enabled) {
+                        console.log(`Sequence: Skipping: ${screen.friendlyName}`);
+                        return; // Skip this one
+                    }
+                    
+                    // Check the resource
+                    // We are not going to check to see if this is valid URL
+                    if (typeof screen.resource !== "string" || screen.resource.length < 10 || screen.resource.length > 200) {
+                        parseErrors += `Item: ${index} (${screen.friendlyName})- invalid resource, length must be 10-200, skipping\n`;
+                        return;
+                    }
+
+                    // Check the month
+                    if (typeof screen.month === "undefined") {
+                        // all good, this is optional
+                    } else if (typeof screen.month !== "string") {
+                        parseErrors += `Item: ${index} (${screen.friendlyName}) - month not a string, skipping\n`;
+                        return;
+                    }
+
+                    // Check the refreshMinutes
+                    if (typeof screen.refreshMinutes !== "string") {
+                        parseErrors += `Item: ${index} (${screen.friendlyName}) - refreshMinutes is not a string, skipping\n`;
+                        return;
+                    }
+
+                    const refreshMinutes = parseInt(screen.refreshMinutes);
+                    if (isNaN(refreshMinutes)) {
+                        parseErrors += `Item: ${index} (${screen.friendlyName}) - refreshMinutes is not a valid number, skipping\n`;
+                        return;
+                    }
+
+                    if (refreshMinutes < 5 || refreshMinutes > 24 * 60) {
+                        parseErrors += `Item: ${index} (${screen.friendlyName}) - refreshMinutes is less than 5 or greater than 1440, skipping\n`;
+                        return;
+                    }
+
+                    // Check the displaySecs
+                    if (typeof screen.displaySecs !== "string") {
+                        parseErrors += `Item: ${index} (${screen.friendlyName}} - displaySecs is not a string, skipping\n`;
+                        return;
+                    }
+
+                    const displaySecs = parseInt(screen.displaySecs);
+                    if (isNaN(displaySecs)) {
+                        parseErrors += `Item: ${index} (${screen.friendlyName}) - displaySecs is not a valid number, skipping\n`;
+                        return;
+                    }
+
+                    if (displaySecs < 5 || displaySecs > 60) {
+                        parseErrors += `Item: ${index} (${screen.friendlyName}) - displaySecs is less than 5 or greater than 60, skipping\n`;
+                        return;
+                    }
+
+                    // Check the timeBug
+                    if (typeof screen.timeBug === "undefined") {
+                        // all good, this is optional
+                        screen.timeBug = "";
+                    } else if (typeof screen.timeBug !== "string") {
+                        parseErrors += `Item: ${index} (${screen.friendlyName}) - timeBug not a string, skipping\n`;
+                        return;
+                    }
+
+                    if (typeof screen.timeBug !== "string") {
+                        parseErrors += `Item: ${index} (${screen.friendlyName}) - displaySecs is not a string, skipping\n`;
+                        return;
+                    }
+                            
+                    // "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/googleTopTen-[01:10].jpg",
+                    if (screen.resource.includes("[01:10]")) {                  
+                        for (let i = 1; i <= 10; i++) {
+                            const newScreen = JSON.parse(JSON.stringify(screen));  // Full clone of the screen 
+
+                            let indexStr = `${i}`;
+                            if (indexStr.length === 1) {
+                                indexStr = "0" + indexStr;
+                            }
+                            const resource = screen.resource;
+                            const newResource = resource.replace("[01:10]", indexStr);
+                            newScreen.resource = newResource;
+                            newScreen.friendlyName = screen.friendlyName + "-" + indexStr;
+
+                            this.screenList.push(newScreen);
+                            
+                            activeScreens++;
+                            console.log(`Sequence: Adding:   ${newScreen.friendlyName}  - ${newResource}`);
+                        }
+                    } else {
+                        this.screenList.push(screen);
+                        activeScreens++;
+                        console.log(`Sequence: Adding:   ${screen.friendlyName}  - ${screen.resource}`);
+                    }
+                });
+            }
 
             if (parseErrors.length > 0) {
                 console.log(parseErrors);
@@ -246,8 +241,7 @@ export class Sequence {
                 screen.nextUpdate = now;
             }
             
-            //console.log(`Sequence::update: Checking: ${screen.resource} (${screen.nextUpdate}, time until update ${(screen.nextUpdate - now)/1000} secs`);
-            if (screen.nextUpdate < now) {
+            if (screen.nextUpdate <= now) {
                 console.log(`Sequence::update: Time to update: ${screen.resource}`);
 
                 const options: AxiosRequestConfig = {
@@ -267,54 +261,21 @@ export class Sequence {
                     })
                     .catch((err) => {
                         console.log(JSON.stringify(err, null, 4));
-                    if (axios.isAxiosError(err)) {
-                        if (err.response) {
-                            console.log(`Sequence::update GET result ${err.response.status}`);
-                            screen.image = null;
-                            screen.message = `${screen.friendlyName}: ${err.response.status}`
-                        } else {
-                            console.log(`Sequence::getScreenList GET result NULL`);
-                            screen.image = null;
-                            screen.message = `${screen.friendlyName}: GET - no response`
+                        if (axios.isAxiosError(err)) {
+                            if (err.response) {
+                                console.log(`Sequence::update GET result ${err.response.status}`);
+                                //screen.image = null;
+                                screen.message = `${screen.friendlyName}: ${err.response.status}`
+                            } else {
+                                console.log(`Sequence::getScreenList GET result NULL`);
+                                //screen.image = null;
+                                screen.message = `${screen.friendlyName}: GET - no response`
+                            }
+
+                            // Failure.  Try again in 10 minutes
+                            screen.nextUpdate = now + (10 * 60 * 1000);
                         }
-                    }
                     });
-
-
-
-
-                // try {
-                //     response = await axios({
-                //         method: "get",
-                //         url: screen.resource, 
-                //         responseType: "arraybuffer",
-                //         timeout: 5000});
-                // } catch (err) {
-                //     console.log(JSON.stringify(err, null, 4));
-                //     if (axios.isAxiosError(err)) {
-                //         if (err.response) {
-                //             console.log(`Sequence::update GET result ${err.response.status}`);
-                //             screen.image = null;
-                //             screen.message = `${screen.friendlyName}: ${err.response.status}`
-                //         } else {
-                //             console.log(`Sequence::getScreenList GET result NULL`);
-                //             screen.image = null;
-                //             screen.message = `${screen.friendlyName}: GET - no response`
-                //         }
-                //     }
-                // };                
-
-                //console.log(`Sequence::update: ${screen.resource} GET status: ${response.status}`);
-
-                // console.log(`response: ${JSON.stringify(response, null, 4)}`);
-
-                // if (response !== null) {
-                //     if (typeof response.data === "undefined") {
-                //         console.log("response.data is undefined");
-                //     } else {
-                //         console.log("resposne.data is defined");
-                //     }
-                // }
 
                 if (screenData !== null) {
                     const imageString = Buffer.from(screenData, 'binary').toString('base64');
@@ -332,11 +293,9 @@ export class Sequence {
                         type = "";
                     }
 
-                    // console.log(`Sequence::update: ${screen.resource} type is ${type}`);
                     let image = new Image();
 
                     image.onload = () => {
-                        //console.log(`Sequence::update: ${screen.resource} image.onload`);
                         screen.image = image;
                     }
 
@@ -395,14 +354,13 @@ export class Sequence {
             return startImage;
         }
 
-        const item: ScreenItem = this.screenList[this.nextIndex] as ScreenItem;
+        const item: ScreenItem = this.screenList[this.nextIndex];
 
         this.nextIndex++;
         
         if (this.nextIndex >= this.screenList.length)
             this.nextIndex = 0;
 
-        //console.log(`${new Date().toLocaleString()}: getNext() returning: ${item.friendlyName}`);
         return item;
     }
 
