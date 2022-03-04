@@ -264,12 +264,8 @@ export class Sequence {
                         if (axios.isAxiosError(err)) {
                             if (err.response) {
                                 console.log(`Sequence::update GET result ${err.response.status}`);
-                                //screen.image = null;
-                                screen.message = `${screen.friendlyName}: ${err.response.status}`
                             } else {
                                 console.log(`Sequence::getScreenList GET result NULL`);
-                                //screen.image = null;
-                                screen.message = `${screen.friendlyName}: GET - no response`
                             }
 
                             // Failure.  Try again in 10 minutes
@@ -305,7 +301,6 @@ export class Sequence {
                         screen.message = `${screen.friendlyName}: Failed to load image data`
                     }
 
-                    // console.log(`Sequence::update: ${screen.resource} type is ${type} again`);
                     // The imgStr is actually a data URI that can be used to load an image directly
                     // as in: <img src={imgStr} />
                     const imgStr = "data:image/" + type + ";base64," + imageString;
@@ -313,7 +308,7 @@ export class Sequence {
                     screen.imageUri = imgStr;
 
                     screen.nextUpdate = now + (screen.refreshMinutes * 60 * 1000);
-                }
+                } 
             } else {
                 const secsTilUpdate = (screen.nextUpdate - now)/1000;
                 const formattedName = (screen.friendlyName + "                           ").substring(0,25);
