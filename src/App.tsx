@@ -22,10 +22,10 @@ const App = (props: AppProps) => {
     // The second, updateScreenState, is a function that will update the screenState and cause this function to be called again.
     const [screenState, updateScreenState] = React.useState({screen: props.sequencer.getFirst(), fade: ""});
    
-    console.log(`${new Date().toLocaleString()}:${new Date().getMilliseconds()}: App starting  screen: ${screenState.screen.friendlyName}, fade: ${screenState.fade}`);
+    //console.log(`${new Date().toLocaleString()}:${new Date().getMilliseconds()}: App starting  screen: ${screenState.screen.friendlyName}, fade: ${screenState.fade}`);
 
     const fadeOut = (screen: any) => {
-        console.log(`${new Date().toLocaleString()}:${new Date().getMilliseconds()}: fadeOut(): screen: ${screen.friendlyName}, Updating fade prop to: fadeOut`);
+        //console.log(`${new Date().toLocaleString()}:${new Date().getMilliseconds()}: fadeOut(): screen: ${screen.friendlyName}, Updating fade prop to: fadeOut`);
         updateScreenState({screen: screen, fade: "fadeOut"}); 
         setTimeout(fadeInNew, 100, screen);  
     };
@@ -35,8 +35,13 @@ const App = (props: AppProps) => {
         
         updateScreenState({screen: newScreen, fade: "fadeIn"});
 
+        let displayTimeMs = (newScreen.displaySecs * 1000);
+        if (newScreen.image === null) {
+            displayTimeMs = 1000;
+        }
+
         clearTimeout(timeout); // Make sure we don't somehow get 2 of these queued
-        timeout = setTimeout(fadeOut, (newScreen).displaySecs * 1000, newScreen);  
+        timeout = setTimeout(fadeOut, displayTimeMs, newScreen);  
     }
 
     // If this is the first time, setup the screen change timeout
@@ -45,8 +50,10 @@ const App = (props: AppProps) => {
         timeout = setTimeout(fadeOut, 10000, screenState.screen);
     } 
 
-    console.log(`${new Date().toLocaleString()}:${new Date().getMilliseconds()}: App returning screen: ${(screenState.screen as ScreenItem).friendlyName}, className: ${screenState.fade}`);
-    
+    if (screenState.fade === "fadeIn") {
+        console.log(`${new Date().toLocaleString()}:${new Date().getMilliseconds()}: App: showing screen: ${(screenState.screen as ScreenItem).friendlyName}`);
+    }
+
     return (
         <div className="App" id="myApp">
             <img className={screenState.fade} 
