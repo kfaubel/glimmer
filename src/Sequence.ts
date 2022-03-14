@@ -260,12 +260,12 @@ export class Sequence {
                         screenData = res?.data;
                     })
                     .catch((err) => {
-                        console.log(JSON.stringify(err, null, 4));
+                        //console.log(JSON.stringify(err, null, 4));
                         if (axios.isAxiosError(err)) {
                             if (err.response) {
-                                console.log(`Sequence::update GET result ${err.response.status}`);
+                                console.warn(`Sequence::update GET result ${err.response.status}`);
                             } else {
-                                console.log(`Sequence::getScreenList GET result NULL`);
+                                console.warn(`Sequence::getScreenList GET result NULL`);
                             }
 
                             // Failure.  Try again in 10 minutes
@@ -349,14 +349,45 @@ export class Sequence {
             return startImage;
         }
 
-        const item: ScreenItem = this.screenList[this.nextIndex];
+        let item: ScreenItem = this.screenList[this.nextIndex];
 
         this.nextIndex++;
         
-        if (this.nextIndex >= this.screenList.length)
+        if (this.nextIndex >= this.screenList.length) {
             this.nextIndex = 0;
+        }
 
+        // If the image is null, look for the next one that is non-null
+        while (item.image === null) {
+            const startingIndex = this.nextIndex;
+        
+            console.warn(`Skipping ${item.friendlyName} since the iamge is null`);
+            item = this.screenList[this.nextIndex];
+
+            this.nextIndex++;
+        
+            if (this.nextIndex >= this.screenList.length)
+                this.nextIndex = 0;
+            
+            if (startingIndex === this.nextIndex) {
+                // We went through the entire list and did not find a non-null image
+                console.warn("All the screen items had null images, show the 'No images...' screen")
+                item = {
+                    image: null, 
+                    imageUri: "",
+                    displaySecs: 10, 
+                    nextUpdate: 0, 
+                    refreshMinutes: 0, 
+                    resource: "", 
+                    friendlyName: "No images", 
+                    message: "No images...",
+                    timeBug: "lower-right-light"
+                };
+                
+                break;
+            }
+        }
+        
         return item;
     }
-
 }

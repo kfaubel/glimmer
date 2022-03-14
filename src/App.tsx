@@ -51,7 +51,7 @@ const App = (props: AppProps) => {
     } 
 
     if (screenState.fade === "fadeIn") {
-        console.log(`${new Date().toLocaleString()}:${new Date().getMilliseconds()}: App: showing screen: ${(screenState.screen as ScreenItem).friendlyName}`);
+        console.log(`${new Date().toLocaleString()}: App: showing screen: ${(screenState.screen as ScreenItem).friendlyName}`);
     }
 
     return (
