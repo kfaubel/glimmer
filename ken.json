@@ -1,0 +1,214 @@
+{
+    "screens": [
+        {
+            "enabled": true,
+            "type": "bitmap",
+            "month": "1:12",
+            "friendlyName": "Red Cedars",
+            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/redcedars.jpg",
+            "refreshMinutes": "10",
+            "displaySecs": "10"
+        },
+        {
+            "enabled": true,
+            "type": "bitmap",
+            "friendlyName": "Tides - Onset",
+            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/onset-tides.jpg",
+            "refreshMinutes": "30",
+            "displaySecs": "10"
+        },
+        {
+            "enabled": true,
+            "type": "bitmap",
+            "month": "5:10",
+            "friendlyName": "Canal currents",
+            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/canal-current.jpg",
+            "refreshMinutes": "30",
+            "displaySecs": "10"
+        },
+        {
+            "enabled": true,
+            "type": "bitmap",
+            "friendlyName": "Sun & Moon",
+            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/OnsetSunMoon.jpg",
+            "timeBug": "upper-right-dark",
+            "refreshMinutes": "30",
+            "displaySecs": "10"
+        },
+        {
+            "enabled": false,
+            "type": "bitmap",
+            "month": "5:10",
+            "friendlyName": "Coast Day 1",
+            "resource": "https://www.weather.gov/images/box/ghwo/MarineHazardDay1.jpg",
+            "refreshMinutes": "240",
+            "displaySecs": "5"
+        },
+        {
+            "enabled": false,
+            "type": "bitmap",
+            "month": "5:10",
+            "friendlyName": "Coast Day 2",
+            "resource": "https://www.weather.gov/images/box/ghwo/MarineHazardDay2.jpg",
+            "refreshMinutes": "240",
+            "displaySecs": "5"
+        },
+        {
+            "enabled": false,
+            "type": "bitmap",
+            "month": "5:10",
+            "friendlyName": "Coast Day 3",
+            "resource": "https://www.weather.gov/images/box/ghwo/MarineHazardDay3.jpg",
+            "refreshMinutes": "240",
+            "displaySecs": "5"
+        },
+        {
+            "enabled": false,
+            "type": "bitmap",
+            "month": "5:10",
+            "friendlyName": "Coast Day 4",
+            "resource": "https://www.weather.gov/images/box/ghwo/MarineHazardDay4.jpg",
+            "refreshMinutes": "240",
+            "displaySecs": "5"
+        },
+        {
+            "enabled": true,
+            "type": "bitmap",
+            "friendlyName": "Front Cove",
+            "resource": "http://glimmerhub.com/images/cove.jpg",
+            "timeBug": "lower-right-light",
+            "refreshMinutes": "30",
+            "displaySecs": "10"
+        },
+        {
+            "enabled": true,
+            "type": "bitmap",
+            "friendlyName": "Onset Graph",
+            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/Onset.jpg",
+            "refreshMinutes": "30",
+            "displaySecs": "10"
+        },
+        {
+            "enabled": true,
+            "type": "bitmap",
+            "friendlyName": "Dunstable Graph",
+            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/Dunstable.jpg",
+            "refreshMinutes": "30",
+            "displaySecs": "10"
+        },
+        {
+            "enabled": false,
+            "type": "bitmap",
+            "friendlyName": "Louisville Graph",
+            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/Louisville.jpg",
+            "refreshMinutes": "30",
+            "displaySecs": "10"
+        },
+        {
+            "enabled": false,
+            "type": "bitmap",
+            "friendlyName": "Forecast - Onset",
+            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/OnsetForecast.jpg",
+            "refreshMinutes": "360",
+            "displaySecs": "10"
+        },
+        {
+            "enabled": false,
+            "type": "bitmap",
+            "friendlyName": "Forecast - Dunstable",
+            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/DunstableForecast.jpg",
+            "refreshMinutes": "360",
+            "displaySecs": "10"
+        },
+        {
+            "enabled": false,
+            "type": "bitmap",
+            "month": "1:4,10:12",
+            "friendlyName": "Snow",
+            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/boxStormTotalSnow.jpg",
+            "refreshMinutes": "360",
+            "displaySecs": "10"
+        },
+        {
+            "enabled": true,
+            "type": "bitmap",
+            "friendlyName": "APOD",
+            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/apod.jpg",
+            "timeBug": "lower-right-light",
+            "refreshMinutes": "360",
+            "displaySecs": "8"
+        },
+        {
+            "enabled": true,
+            "type": "bitmap",
+            "month": "3:10",
+            "friendlyName": "Fenway",
+            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/Fenway.jpg",
+            "refreshMinutes": "30",
+            "displaySecs": "8"
+        },
+        {
+            "enabled": true,
+            "type": "bitmap",
+            "month": "3:10",
+            "friendlyName": "AL East Standings",
+            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/standings-Fenway.jpg",
+            "refreshMinutes": "60",
+            "displaySecs": "8"
+        },
+        {
+            "enabled": false,
+            "type": "bitmap",
+            "month": "3:10",
+            "friendlyName": "AL East Standings",
+            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/standings-AL-E.jpg",
+            "refreshMinutes": "60",
+            "displaySecs": "8"
+        },
+        {
+            "enabled": false,
+            "type": "bitmap",
+            "friendlyName": "google-top-ten",
+            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/googleTopTen-[01:10].jpg",
+            "timeBug": "lower-right-dark",
+            "refreshMinutes": "60",
+            "displaySecs": "6"
+        },
+        {
+            "enabled": true,
+            "type": "bitmap",
+            "friendlyName": "the-washington-post",
+            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/the-washington-post-[01:10].jpg",
+            "timeBug": "lower-right-dark",
+            "refreshMinutes": "60",
+            "displaySecs": "8"
+        },
+        {
+            "enabled": true,
+            "type": "bitmap",
+            "friendlyName": "the-verge",
+            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/the-verge-[01:10].jpg",
+            "timeBug": "lower-right-dark",
+            "refreshMinutes": "60",
+            "displaySecs": "7"
+        },
+        {
+            "enabled": false,
+            "type": "bitmap",
+            "friendlyName": "google-news",
+            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/google-news-[01:10].jpg",
+            "timeBug": "lower-right-dark",
+            "refreshMinutes": "60",
+            "displaySecs": "6"
+        },
+        {
+            "enabled": false,
+            "type": "bitmap",
+            "friendlyName": "engadget",
+            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/engadget-[01:10].jpg",
+            "timeBug": "lower-right-dark",
+            "refreshMinutes": "60",
+            "displaySecs": "6"
+        }
+    ]
+}

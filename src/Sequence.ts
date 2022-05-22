@@ -23,7 +23,8 @@ export class Sequence {
     updatePeriod: number;
     nullCount: number;
     profile: string;
-    screenListUrlBase = "http://glimmerhub.com/config/"
+    //screenListUrlBase = "http://glimmerhub.com/config/"
+    screenListUrlBase = "https://glimmerstorage.blob.core.windows.net/glimmer/config/";
 
     constructor(profile: string) {
         this.nextIndex = 0;
@@ -35,7 +36,10 @@ export class Sequence {
 
     start = async () => {
         await this.getScreenList();
-        setInterval(this.getScreenList, 24 * 60 * 60 * 1000);
+
+        // This line will cause the screenlist to be fetched again every 24 hours.
+        // It often fails so lets not do until we understand what is going on.
+        //setInterval(this.getScreenList, 24 * 60 * 60 * 1000);
 
         await this.update(); // Do it once now.
         setInterval(this.update, 60*1000);

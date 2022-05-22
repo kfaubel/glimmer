@@ -8,6 +8,7 @@ body {
 
 .time-bug {
     position: fixed;
+    text-align: center;
     width: 14%;
     height: 8%;
     z-index: 9999;
@@ -102,8 +103,6 @@ body {
         opacity: 0;
     }
 }
-
-
 
 .fadeIn {
     animation: fadeInAnimation 1s linear;

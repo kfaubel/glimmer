@@ -1,6 +1,5 @@
 import ReactDOM from 'react-dom';
 import App from './App';
-import reportWebVitals from './reportWebVitals';
 import { Sequence } from './Sequence';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -11,8 +10,3 @@ sequence.start(); // Loads the screen list, sets an interval timer to update eac
 ReactDOM.render(
     <App sequencer = {sequence}/>, document.getElementById('root')
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
