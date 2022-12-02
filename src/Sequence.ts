@@ -68,9 +68,10 @@ export class Sequence {
 
             await axios.get(url, options)
                 .then((res: AxiosResponse) => {
-                    console.log(`Sequence::getScreenList GET result ${res.status}`);
+                    console.log(`Sequence::getScreenList GET ${url} result ${res.status}`);
                     if (typeof res.data.screens !== "undefined") {
                         serverList = res.data.screens as Array<ScreenItem>;
+                        console.log(JSON.stringify(serverList, null, 4));
                     }
                 })
                 .catch((err) => {
