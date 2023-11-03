@@ -5,7 +5,7 @@
             "type": "bitmap",
             "month": "1:12",
             "friendlyName": "Red Cedars",
-            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/redcedars.jpg",
+            "resource": "https://glimmerstorage2.blob.core.windows.net/glimmer/redcedars.jpg",
             "refreshMinutes": "10",
             "displaySecs": "10"
         },
@@ -13,7 +13,7 @@
             "enabled": true,
             "type": "bitmap",
             "friendlyName": "Tides - Onset",
-            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/onset-tides.jpg",
+            "resource": "https://glimmerstorage2.blob.core.windows.net/glimmer/onset-tides.jpg",
             "refreshMinutes": "30",
             "displaySecs": "10"
         },
@@ -22,7 +22,7 @@
             "type": "bitmap",
             "month": "5:10",
             "friendlyName": "Canal currents",
-            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/canal-current.jpg",
+            "resource": "https://glimmerstorage2.blob.core.windows.net/glimmer/canal-current.jpg",
             "refreshMinutes": "30",
             "displaySecs": "10"
         },
@@ -30,7 +30,7 @@
             "enabled": true,
             "type": "bitmap",
             "friendlyName": "Sun & Moon",
-            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/OnsetSunMoon.jpg",
+            "resource": "https://glimmerstorage2.blob.core.windows.net/glimmer/OnsetSunMoon.jpg",
             "timeBug": "upper-right-dark",
             "refreshMinutes": "30",
             "displaySecs": "10"
@@ -75,16 +75,16 @@
             "enabled": true,
             "type": "bitmap",
             "friendlyName": "Front Cove",
-            "resource": "http://glimmerhub.com/images/cove.jpg",
+            "resource": "https://glimmerstorage2.blob.core.windows.net/glimmer/FrontCove.jpg",
             "timeBug": "lower-right-light",
-            "refreshMinutes": "30",
+            "refreshMinutes": "10",
             "displaySecs": "10"
         },
         {
             "enabled": true,
             "type": "bitmap",
             "friendlyName": "Onset Graph",
-            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/Onset.jpg",
+            "resource": "https://glimmerstorage2.blob.core.windows.net/glimmer/Onset.jpg",
             "refreshMinutes": "30",
             "displaySecs": "10"
         },
@@ -92,23 +92,23 @@
             "enabled": true,
             "type": "bitmap",
             "friendlyName": "Dunstable Graph",
-            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/Dunstable.jpg",
+            "resource": "https://glimmerstorage2.blob.core.windows.net/glimmer/Dunstable.jpg",
             "refreshMinutes": "30",
             "displaySecs": "10"
         },
         {
-            "enabled": false,
+            "enabled": true,
             "type": "bitmap",
             "friendlyName": "Louisville Graph",
-            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/Louisville.jpg",
+            "resource": "https://glimmerstorage2.blob.core.windows.net/glimmer/Louisville.jpg",
             "refreshMinutes": "30",
-            "displaySecs": "10"
+            "displaySecs": "8"
         },
         {
             "enabled": false,
             "type": "bitmap",
             "friendlyName": "Forecast - Onset",
-            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/OnsetForecast.jpg",
+            "resource": "https://glimmerstorage2.blob.core.windows.net/glimmer/OnsetForecast.jpg",
             "refreshMinutes": "360",
             "displaySecs": "10"
         },
@@ -116,7 +116,7 @@
             "enabled": false,
             "type": "bitmap",
             "friendlyName": "Forecast - Dunstable",
-            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/DunstableForecast.jpg",
+            "resource": "https://glimmerstorage2.blob.core.windows.net/glimmer/DunstableForecast.jpg",
             "refreshMinutes": "360",
             "displaySecs": "10"
         },
@@ -125,7 +125,7 @@
             "type": "bitmap",
             "month": "1:4,10:12",
             "friendlyName": "Snow",
-            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/boxStormTotalSnow.jpg",
+            "resource": "https://glimmerstorage2.blob.core.windows.net/glimmer/boxStormTotalSnow.jpg",
             "refreshMinutes": "360",
             "displaySecs": "10"
         },
@@ -133,7 +133,7 @@
             "enabled": true,
             "type": "bitmap",
             "friendlyName": "APOD",
-            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/apod.jpg",
+            "resource": "https://glimmerstorage2.blob.core.windows.net/glimmer/apod.jpg",
             "timeBug": "lower-right-light",
             "refreshMinutes": "360",
             "displaySecs": "8"
@@ -143,7 +143,7 @@
             "type": "bitmap",
             "month": "3:10",
             "friendlyName": "Fenway",
-            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/Fenway.jpg",
+            "resource": "https://glimmerstorage2.blob.core.windows.net/glimmer/Fenway.jpg",
             "refreshMinutes": "30",
             "displaySecs": "8"
         },
@@ -152,24 +152,15 @@
             "type": "bitmap",
             "month": "3:10",
             "friendlyName": "AL East Standings",
-            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/standings-Fenway.jpg",
+            "resource": "https://glimmerstorage2.blob.core.windows.net/glimmer/standings-Fenway.jpg",
             "refreshMinutes": "60",
             "displaySecs": "8"
         },
         {
-            "enabled": false,
-            "type": "bitmap",
-            "month": "3:10",
-            "friendlyName": "AL East Standings",
-            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/standings-AL-E.jpg",
-            "refreshMinutes": "60",
-            "displaySecs": "8"
-        },
-        {
-            "enabled": false,
+            "enabled": true,
             "type": "bitmap",
             "friendlyName": "google-top-ten",
-            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/googleTopTen-[01:10].jpg",
+            "resource": "https://glimmerstorage2.blob.core.windows.net/glimmer/googleTopTen-[01:10].jpg",
             "timeBug": "lower-right-dark",
             "refreshMinutes": "60",
             "displaySecs": "6"
@@ -178,37 +169,105 @@
             "enabled": true,
             "type": "bitmap",
             "friendlyName": "the-washington-post",
-            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/the-washington-post-[01:10].jpg",
+            "resource": "https://glimmerstorage2.blob.core.windows.net/glimmer/the-washington-post-[01:10].jpg",
             "timeBug": "lower-right-dark",
+            "refreshMinutes": "60",
+            "displaySecs": "10"
+        },{
+            "enabled": true,
+            "type": "bitmap",
+            "month": "1:12",
+            "friendlyName": "Red Cedars",
+            "resource": "https://glimmerstorage2.blob.core.windows.net/glimmer/redcedars.jpg",
+            "refreshMinutes": "10",
+            "displaySecs": "10"
+        },
+        {
+            "enabled": true,
+            "type": "bitmap",
+            "friendlyName": "Tides - Onset",
+            "resource": "https://glimmerstorage2.blob.core.windows.net/glimmer/onset-tides.jpg",
+            "refreshMinutes": "30",
+            "displaySecs": "10"
+        },
+        {
+            "enabled": true,
+            "type": "bitmap",
+            "month": "5:10",
+            "friendlyName": "Canal currents",
+            "resource": "https://glimmerstorage2.blob.core.windows.net/glimmer/canal-current.jpg",
+            "refreshMinutes": "30",
+            "displaySecs": "10"
+        },
+        {
+            "enabled": true,
+            "type": "bitmap",
+            "friendlyName": "Sun & Moon",
+            "resource": "https://glimmerstorage2.blob.core.windows.net/glimmer/OnsetSunMoon.jpg",
+            "timeBug": "upper-right-dark",
+            "refreshMinutes": "30",
+            "displaySecs": "10"
+        },
+        {
+            "enabled": true,
+            "type": "bitmap",
+            "friendlyName": "Front Cove",
+            "resource": "https://glimmerstorage2.blob.core.windows.net/glimmer/FrontCove.jpg",
+            "timeBug": "lower-right-light",
+            "refreshMinutes": "10",
+            "displaySecs": "10"
+        },
+        {
+            "enabled": true,
+            "type": "bitmap",
+            "friendlyName": "Onset Graph",
+            "resource": "https://glimmerstorage2.blob.core.windows.net/glimmer/Onset.jpg",
+            "refreshMinutes": "30",
+            "displaySecs": "10"
+        },
+        {
+            "enabled": true,
+            "type": "bitmap",
+            "friendlyName": "Dunstable Graph",
+            "resource": "https://glimmerstorage2.blob.core.windows.net/glimmer/Dunstable.jpg",
+            "refreshMinutes": "30",
+            "displaySecs": "10"
+        },
+        {
+            "enabled": true,
+            "type": "bitmap",
+            "month": "3:10",
+            "friendlyName": "Fenway",
+            "resource": "https://glimmerstorage2.blob.core.windows.net/glimmer/Fenway.jpg",
+            "refreshMinutes": "30",
+            "displaySecs": "8"
+        },
+        {
+            "enabled": true,
+            "type": "bitmap",
+            "month": "3:10",
+            "friendlyName": "AL East Standings",
+            "resource": "https://glimmerstorage2.blob.core.windows.net/glimmer/standings-Fenway.jpg",
             "refreshMinutes": "60",
             "displaySecs": "8"
         },
         {
             "enabled": true,
             "type": "bitmap",
-            "friendlyName": "the-verge",
-            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/the-verge-[01:10].jpg",
+            "friendlyName": "ars-tecnnica",
+            "resource": "https://glimmerstorage2.blob.core.windows.net/glimmer/ars-technica-[01:10].jpg",
             "timeBug": "lower-right-dark",
             "refreshMinutes": "60",
-            "displaySecs": "7"
+            "displaySecs": "10"
         },
         {
-            "enabled": false,
+            "enabled": true,
             "type": "bitmap",
-            "friendlyName": "google-news",
-            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/google-news-[01:10].jpg",
+            "friendlyName": "CNN",
+            "resource": "https://glimmerstorage2.blob.core.windows.net/glimmer/cnn-[01:10].jpg",
             "timeBug": "lower-right-dark",
             "refreshMinutes": "60",
-            "displaySecs": "6"
-        },
-        {
-            "enabled": false,
-            "type": "bitmap",
-            "friendlyName": "engadget",
-            "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/engadget-[01:10].jpg",
-            "timeBug": "lower-right-dark",
-            "refreshMinutes": "60",
-            "displaySecs": "6"
+            "displaySecs": "10"
         }
     ]
 }

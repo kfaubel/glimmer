@@ -104,3 +104,8 @@ dist
 
 # TernJS port file
 .tern-port
+ken.json
+sample-config.json
+webpack.config.jsZ
+ken.json
+.gitignore

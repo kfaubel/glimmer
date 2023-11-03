@@ -1,5 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 // This is like node's builtin Buffer but works in the browser
+//import dotenv from 'dotenv';
+
 //import Buffer from "buffer/";
 const Buffer = require('buffer/').Buffer
 
@@ -23,8 +25,9 @@ export class Sequence {
     updatePeriod: number;
     nullCount: number;
     profile: string;
+    screenListUrlBase: string | undefined;
     //screenListUrlBase = "http://glimmerhub.com/config/"
-    screenListUrlBase = "https://glimmerstorage.blob.core.windows.net/glimmer/config/";
+    //screenListUrlBase = "https://glimmerstorage2.blob.core.windows.net/glimmer/config/";
 
     constructor(profile: string) {
         this.nextIndex = 0;
@@ -32,6 +35,10 @@ export class Sequence {
         this.updatePeriod = 60;
         this.nullCount = 0;
         this.profile = profile;
+
+        //dotenv.config();
+        this.screenListUrlBase = process.env.REACT_APP_SCREEN_LIST_URL_BASE;
+        console.log(`Sequence::constructor - SCREEN_LIST_URL_BASE: ${this.screenListUrlBase}`)
     }
 
     start = async () => {
@@ -54,6 +61,12 @@ export class Sequence {
             if (this.profile === "") {
                 console.log(`Sequence::getScreenList - No porfile`);
                 message = `http://host:port/<profile> - no profile`;
+                throw new Error("No profile");
+            }
+           
+            if (this.screenListUrlBase === undefined) {
+                console.log(`Sequence::getScreenList - No screenListUrlBase in environment`);
+                message = `http://host:port/<profile> - No SCREEN_LIST_URL_BASE`;
                 throw new Error("No profile");
             }
 
@@ -178,7 +191,7 @@ export class Sequence {
                         return;
                     }
                             
-                    // "resource": "https://glimmerstorage.blob.core.windows.net/glimmer/googleTopTen-[01:10].jpg",
+                    // "resource": "https://glimmerstorage2.blob.core.windows.net/glimmer/googleTopTen-[01:10].jpg",
                     if (screen.resource.includes("[01:10]")) {                  
                         for (let i = 1; i <= 10; i++) {
                             const newScreen = JSON.parse(JSON.stringify(screen));  // Full clone of the screen 
